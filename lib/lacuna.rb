@@ -6,6 +6,8 @@ require 'openssl'
 require 'json'
 
 class Lacuna
+    VERSION = '0.0.1'
+
     API_KEYS = {
         # Private key : 66090c68-2d51-47fa-b406-44dc98e6f6d3
         'us1' => 'bbd9b648-6e45-419d-bdaf-5726919c4a64',
