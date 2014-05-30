@@ -8,5 +8,9 @@ Made with :heart: by Nathan McCallum under the MIT license!
 Changes
 =======
 
+###0.0.2 (2014-05-30)
+- Fix session handling.
+- Add tests that actually get data.
+
 ###0.0.1 (2014-05-25)
-- Initial version
+- Initial version.

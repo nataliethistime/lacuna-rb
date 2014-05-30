@@ -5,12 +5,35 @@ require 'net/http'
 require 'openssl'
 require 'json'
 
+class Session
+    @@session = nil
+
+    def self.set(val)
+        @@session = val
+    end
+
+    def self.end
+        self.set nil
+    end
+
+    def self.get
+        @@session
+    end
+
+    def self.valid?
+        # TODO: take into account the two hour session timeout.
+        !@@session.nil?
+    end
+end
+
 class Lacuna
-    VERSION = '0.0.1'
+    VERSION = '0.0.2'
 
     API_KEYS = {
         # Private key : 66090c68-2d51-47fa-b406-44dc98e6f6d3
         'us1' => 'bbd9b648-6e45-419d-bdaf-5726919c4a64',
+        # Private key : 3a9c5121-0939-4ef9-82c2-7c1aa4f7d1bc
+        'pt'  => '3746d4a2-0f44-44db-9308-22a85c234aab',
     }
 
     LACUNA_DOMAIN = 'lacunaexpanse.com'
@@ -69,8 +92,10 @@ class LacunaModule
             :method  => post_method,
             :params  => data
         }
+
+        # Include session id in requests that need it
         if "#{post_module}/#{post_method}" != 'empire/login'
-            body[:params].unshift @session_id
+            body[:params].unshift Session.get
         end
 
         request.body = JSON.generate body
@@ -88,13 +113,13 @@ class LacunaModule
 
     # Check that we're logged in, if not, get session a set up.
     def session_stuff
-        if !@session_id
+        if !Session.valid?
             res = self.send(@base_url, 'empire', 'login', [
                 @args[:name],
                 @args[:password],
                 @args[:api_key],
             ])
-            @session_id = res['session_id']
+            Session.set res['session_id']
         else
             # check time
             return
