@@ -2,10 +2,10 @@
 
 require './lib/lacuna'
 
-describe LacunaModule, '#send' do
+describe 'Lacuna::Module', '#send' do
 
     before :each do
-        @lacuna = Lacuna.new({
+        Lacuna.connect({
             :name => 'lacuna-rb Test Account',
             :password => '123qwe',
             :server_name => 'pt',
@@ -13,11 +13,11 @@ describe LacunaModule, '#send' do
     end
 
     it 'should return data' do
-        status = @lacuna.empire.get_status
+        status = Lacuna::Empire.get_status
         expect(status).to_not be_nil
         expect(status['empire']['name']).to eq 'lacuna-rb Test Account'
 
-        body = @lacuna.body.get_status status['empire']['home_planet_id']
+        body = Lacuna::Body.get_status status['empire']['home_planet_id']
         expect(body['body']['name']).to eq 'Ruby'
     end
 end
