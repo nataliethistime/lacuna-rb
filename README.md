@@ -8,7 +8,7 @@ Made with :heart: by Nathan McCallum under the MIT license!
 Changes
 =======
 
-###0.0.4 (Unreleased)
+###0.0.4 (2014-06-06)
 - Added support for all Lacuna's modules.
 
 ###0.0.3 (2014-06-02)

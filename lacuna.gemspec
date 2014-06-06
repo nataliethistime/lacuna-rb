@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = 'lacuna'
-  s.version     = '0.0.3'
-  s.date        = '2010-06-02'
+  s.version     = '0.0.4'
+  s.date        = '2014-06-06'
   s.summary     = "Lacuna is a Ruby library for using the API of The Lacuna Expanse."
   s.description = "Lacuna is a Ruby library for using the API of The Lacuna Expanse."
   s.authors     = ["Nathan McCallum"]
