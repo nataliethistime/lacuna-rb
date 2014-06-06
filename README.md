@@ -8,6 +8,9 @@ Made with :heart: by Nathan McCallum under the MIT license!
 Changes
 =======
 
+###0.0.4 (Unreleased)
+- Added support for all Lacuna's modules.
+
 ###0.0.3 (2014-06-02)
 - Changed the API to be more modular.
 - Added support for module-specific helper methods. Eg, `Lacuna::Empire.planets`

@@ -51,7 +51,31 @@ module Lacuna
         @module_name = 'empire'
     end
 
+    class Alliance < Lacuna::Extras::Alliance
+        @module_name = 'alliance'
+    end
+
+    class Inbox < Lacuna::Extras::Inbox
+        @module_name = 'inbox'
+    end
+
+    class Stats < Lacuna::Extras::Stats
+        @module_name = 'stats'
+    end
+
+    class Map < Lacuna::Extras::Map
+        @module_name = 'map'
+    end
+
     class Body < Lacuna::Extras::Body
         @module_name = 'body'
+    end
+
+    class Buildings < Lacuna::Extras::Buildings
+        @module_name = 'buildings'
+    end
+
+    class Captcha < Lacuna::Extras::Captcha
+        @module_name = 'cpatcha'
     end
 end

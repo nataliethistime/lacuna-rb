@@ -2,7 +2,20 @@
 
 require './lib/lacuna'
 
-describe 'Lacuna::Module', '#send' do
+describe Lacuna do
+    it 'should define all the RPC modules of the Lacuna server' do
+        expect(Lacuna::Alliance).to_not be_nil
+        expect(Lacuna::Empire).to_not be_nil
+        expect(Lacuna::Inbox).to_not be_nil
+        expect(Lacuna::Stats).to_not be_nil
+        expect(Lacuna::Map).to_not be_nil
+        expect(Lacuna::Body).to_not be_nil
+        expect(Lacuna::Buildings).to_not be_nil
+        expect(Lacuna::Captcha).to_not be_nil
+    end
+end
+
+describe Lacuna::Module, '#send' do
 
     before :each do
         Lacuna.connect({
