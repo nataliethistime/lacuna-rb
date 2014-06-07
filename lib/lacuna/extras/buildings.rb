@@ -11,7 +11,6 @@ module Lacuna
                     AlgaePond
                     AmalgusMeadow
                     Apple
-                    Archaeology
                     AtmosphericEvaporator
                     Beach
                     Bean

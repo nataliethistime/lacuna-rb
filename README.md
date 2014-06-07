@@ -8,6 +8,10 @@ Made with :heart: by Nathan McCallum under the MIT license!
 Changes
 =======
 
+###0.0.7 (Unreleased)
+- Merged [lacuna-rb](http://github.com/Vasari/lacuna-rb) and [lacuna-util-rb](http://github.com/Vasari/lacuna-util-rb)
+- `MakeHalls` now uses the new helper methods.
+
 ###0.0.6 (2014-06-07)
 - Implemented some helper methods.
 

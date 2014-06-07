@@ -1,8 +1,8 @@
 # encoding: utf-8
 
-class Lacuna
+module Lacuna
     class Extras
-        class Archaeology
+        class Archaeology < Lacuna::Module
             def self.get_inventory(id)
                 glyphs = Lacuna::Archaeology.get_glyph_summary(id)['glyphs']
                 inventory = {}
