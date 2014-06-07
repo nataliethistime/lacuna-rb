@@ -36,3 +36,4 @@ Gemfile.lock
 # Sublime Text stuff
 *.sublime-project
 *.sublime-workspace
+config.json
