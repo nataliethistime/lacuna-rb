@@ -15,6 +15,31 @@ describe Lacuna do
     end
 end
 
+describe Lacuna::PlanetaryCommand do
+
+    before :each do
+        Lacuna.connect({
+            :name => 'lacuna-rb Test Account',
+            :password => '123qwe',
+            :server_name => 'pt',
+        })
+    end
+
+    it 'should be defined dynamically according to building list' do
+        pcc = Lacuna::PlanetaryCommand
+        expect(pcc).to_not be_nil
+        expect(pcc.respond_to?('send')).to eq true
+    end
+
+    it 'should be able to send a request' do
+        pcc = Lacuna::PlanetaryCommand
+        result = pcc.view_plans
+        expect(result).to_not be_nil
+        # We didn't provide a building id, do it'll throw an error.
+        expect(result['code']).to_not be_nil
+    end
+end
+
 describe Lacuna::Module, '#send' do
 
     before :each do

@@ -76,6 +76,17 @@ module Lacuna
     end
 
     class Captcha < Lacuna::Extras::Captcha
-        @module_name = 'cpatcha'
+        @module_name = 'captcha'
+    end
+
+    # Note: this has no support for building specific extras. I guess we could
+    #   just define them manually?
+    Lacuna::Buildings.types.each do |name|
+        module_name = name.downcase
+        Lacuna.class_eval <<-ENDOFDEFINITION
+            class #{name} < Lacuna::Module
+                @module_name = "#{module_name}"
+            end
+        ENDOFDEFINITION
     end
 end
