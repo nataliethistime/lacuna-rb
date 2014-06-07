@@ -79,6 +79,10 @@ module Lacuna
         @module_name = 'captcha'
     end
 
+    class Archaeology < Lacuna::Extras::Archaeology
+        @module_name = 'archaeology'
+    end
+
     # Note: this has no support for building specific extras. I guess we could
     #   just define them manually?
     Lacuna::Buildings.types.each do |name|
