@@ -8,7 +8,7 @@ Made with :heart: by Nathan McCallum under the MIT license!
 Changes
 =======
 
-###0.0.5 (Unreleased)
+###0.0.5 (2014-06-07)
 - Added support for sending requests to building modules.
 
 ###0.0.4 (2014-06-06)
