@@ -1,7 +1,11 @@
+# encoding: utf-8
+
 $LOAD_PATH.unshift File.dirname __FILE__
 
 require 'require_all'
 require 'json'
+
+require 'lacuna_util/version'
 
 class LacunaUtil
     @@tasks = {}
