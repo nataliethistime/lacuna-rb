@@ -23,6 +23,10 @@ class CleanMail < LacunaUtil::Task
         # Isolationists are not affected by Fissures.
         tags << 'Fissure' if status['empire']['is_isolationist'].to_i > 0
 
+        self.trash(self.get_mail_to_trash(page, seen, tags))
+    end
+
+    def get_mail_to_trash(page, seen, tags)
         while true
             puts "Checking page #{page}"
 
@@ -43,7 +47,9 @@ class CleanMail < LacunaUtil::Task
                 page += 1
             end
         end
+    end
 
+    def trash(to_trash = [])
         puts "Trashing #{to_trash.size} messages... hang on tight, kid!"
         Lacuna::Inbox.trash_messages to_trash
     end

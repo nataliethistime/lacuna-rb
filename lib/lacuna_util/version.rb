@@ -1,5 +1,5 @@
 # encoding: utf-8
 
-module LacunaUtil
+class LacunaUtil
     VERSION = '0.0.7'
 end
