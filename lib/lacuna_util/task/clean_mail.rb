@@ -27,6 +27,7 @@ class CleanMail < LacunaUtil::Task
     end
 
     def get_mail_to_trash(page, seen, tags)
+        to_trash = []
         while true
             puts "Checking page #{page}"
 
@@ -47,6 +48,7 @@ class CleanMail < LacunaUtil::Task
                 page += 1
             end
         end
+        to_trash
     end
 
     def trash(to_trash = [])

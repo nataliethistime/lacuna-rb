@@ -24,7 +24,14 @@ class LacunaUtil
     end
 
     def self.task(name)
-        @@tasks[name]
+        t = @@tasks[name]
+
+        unless t.nil?
+            t
+        else
+            puts "No #{name} task!"
+            exit
+        end
     end
 
     def self.has_task?(tname)
