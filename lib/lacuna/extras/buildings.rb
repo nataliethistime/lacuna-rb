@@ -4,6 +4,17 @@ module Lacuna
     class Extras
         class Buildings < Lacuna::Module
 
+            # Return the class for the provided building url.
+            # Note: if we request /archaeology, Lacuna::Archaeology is already,
+            #   however, I am too lazy to avoid this duplication. Due to the fact
+            #   that when using this method, most likely all you want to do is
+            #   upgrade or downgrade (which obviously doesn't need the Extras).
+            def self.url2class(url)
+                new_class = Class.new Lacuna::Module
+                new_class.instance_variable_set('@module_name', url.split('/').last)
+                new_class
+            end
+
             # The list of all the buildings this client can interact with.
             def self.types
                 %w[

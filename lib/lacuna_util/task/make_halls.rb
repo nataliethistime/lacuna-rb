@@ -15,6 +15,8 @@ class MakeHalls < LacunaUtil::Task
     def run
         super
 
+        total = 0
+
         Lacuna::Empire.planets.each do |id, name|
             puts "Checking on #{name}"
             buildings = Lacuna::Body.get_buildings(id)['buildings']
@@ -41,10 +43,13 @@ class MakeHalls < LacunaUtil::Task
             end
 
             if made > 0
-                puts "Successfully made #{made} Halls of Vrbansk"
-            else
-                puts "Didn't make any halls! :("
+                puts "Made #{made} Halls on #{name}!"
+                total += made
             end
+        end
+
+        if total > 0
+            puts "Finished making #{total} Halls of Vrbansk!"
         end
     end
 end
