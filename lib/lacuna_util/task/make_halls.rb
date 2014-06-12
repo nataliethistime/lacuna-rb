@@ -12,15 +12,18 @@ class MakeHalls < LacunaUtil::Task
         %w( rutile   chromite   chalcopyrite galena    ),
     ]
 
-    def run
-        super
+    def args
 
+    end
+
+    def _run(args, config)
         total = 0
 
         Lacuna::Empire.planets.each do |id, name|
             puts "Checking on #{name}"
             buildings = Lacuna::Body.get_buildings(id)['buildings']
             archaeology = Lacuna::Body.find_building(buildings, 'Archaeology Ministry')
+            next if archaeology.nil?
             inventory = Lacuna::Archaeology.get_inventory(archaeology['id'])
 
             made = 0
@@ -43,13 +46,13 @@ class MakeHalls < LacunaUtil::Task
             end
 
             if made > 0
-                puts "Made #{made} Halls on #{name}!"
+                puts "Made #{made} Halls on #{name}"
                 total += made
             end
         end
 
         if total > 0
-            puts "Finished making #{total} Halls of Vrbansk!"
+            puts "Finished making #{total} Halls of Vrbansk"
         end
     end
 end

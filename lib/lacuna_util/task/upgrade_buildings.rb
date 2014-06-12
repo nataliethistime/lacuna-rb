@@ -1,45 +1,65 @@
 # encoding: utf-8
 
+require 'optparse'
+
 require 'lacuna_util/task'
 
 class UpgradeBuildings < LacunaUtil::Task
-    def run
-        super
+
+    def args
+        args = {
+            :dry_run => false,
+        }
+        OptionParser.new do |opts|
+            opts.on("-d", "--dry_run", "Run, showing actions, but not changing anything.") do
+                args[:dry_run] = true
+            end
+        end.parse!
+        args
+    end
+
+    def _run(args, config)
         Lacuna::Empire.planets.each do |id, name|
             catch :planet do
                 puts "Looking on #{name} for buildings to upgrade."
                 buildings = Lacuna::Body.get_buildings(id)['buildings']
 
                 UPGRADES.each do |upgrade|
-                    build = Lacuna::Body.find_building(buildings, upgrade[:name])
-                    next if build.nil?
+                    builds = Lacuna::Body.find_buildings(buildings, upgrade[:name])
+                    next if builds.nil?
 
-                    if upgrade[:level] > build['level'].to_i &&
-                        build['pending_build'].nil?
-                        to_upgrade = Lacuna::Buildings.url2class(build['url'])
+                    builds.each do |build|
+                        if upgrade[:level] > build['level'].to_i &&
+                            build['pending_build'].nil?
+                            to_upgrade = Lacuna::Buildings.url2class(build['url'])
 
-                        # Do the dirty work
-                        to_level = build['level'].to_i + 1
-                        print "#{name}: Upgrading #{build['name']} to #{to_level}!"
-                        rv = to_upgrade.upgrade build['id']
+                            # Do the dirty work
+                            to_level = build['level'].to_i + 1
+                            puts "#{name}: Upgrading #{build['name']} to #{to_level}!"
+                            next if args[:dry_run]
+                            rv = to_upgrade.upgrade build['id']
 
-                        unless rv['building'].nil?
-                            print ' '
-                            puts 'Success!'
-                        else
-                            # Handle the multiple errors here!
-                            if rv['message'] =~ /no room left in the build queue/
-                                # Move to the next planet.
-                                throw :planet
+                            unless rv['building'].nil?
+                                # I guess log down the  building upgrade???
                             else
-                                print ' '
-                                puts 'Unknown Error'
-                                p rv
+                                # Handle the multiple errors here!
+                                if rv['message'] =~ /no room left in the build queue/
+                                    # Move to the next planet.
+                                    throw :planet
+                                else
+                                    puts 'Unknown Error'
+                                    p rv
+                                end
                             end
                         end
                     end
                 end
             end
+
+            # Give the screen some space..
+            puts ''
+            puts ''
+            puts ''
         end
     end
 

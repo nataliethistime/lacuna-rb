@@ -3,9 +3,12 @@
 require 'lacuna_util/task'
 
 class CleanMail < LacunaUtil::Task
-    def run
-        super
 
+    def args
+
+    end
+
+    def _run(args, config)
         status = Lacuna::Empire.get_status
 
         if status['empire']['has_new_messages'].to_i == 0
