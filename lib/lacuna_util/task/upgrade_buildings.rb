@@ -90,22 +90,6 @@ class UpgradeBuildings < LacunaUtil::Task
             :level => 30,
         },
         {
-            :name  => 'Food Reserve',
-            :level => 30,
-        },
-        {
-            :name  => 'Ore Storage Tanks',
-            :level => 30,
-        },
-        {
-            :name  => 'Water Storage Tank',
-            :level => 30,
-        },
-        {
-            :name  => 'Energy Reserve',
-            :level => 30,
-        },
-        {
             :name  => 'Planetary Command Center',
             :level => 30,
         },
@@ -268,6 +252,22 @@ class UpgradeBuildings < LacunaUtil::Task
         },
         { ## Not sure why I have one of these, but oh well, upgrade it!
             :name => 'Luxury Housing',
+            :level => 30,
+        },
+        {
+            :name  => 'Food Reserve',
+            :level => 30,
+        },
+        {
+            :name  => 'Ore Storage Tanks',
+            :level => 30,
+        },
+        {
+            :name  => 'Water Storage Tank',
+            :level => 30,
+        },
+        {
+            :name  => 'Energy Reserve',
             :level => 30,
         },
         {
