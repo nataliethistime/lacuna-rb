@@ -25,11 +25,11 @@ class InitStars < LacunaUtil::Task
         oracle_hash = Lacuna::Body.find_building(buildings, 'Oracle of Anid')
         stars, bodies = self.get_stars_and_bodies oracle_hash['id']
 
-        puts JSON.generate(stars.first)
-        puts JSON.generate(bodies.first)
-
         self.clear_old_data
         self.save_data(stars, bodies)
+
+        puts "Saved #{stars.size} stars."
+        puts "Saved #{bodies.size} bodies."
     end
 
     def get_stars_and_bodies(oracle_id)
@@ -39,6 +39,8 @@ class InitStars < LacunaUtil::Task
         page = 1
 
         while true
+            puts "Requesting page #{page}..."
+
             result = Lacuna::OracleOfAnid.get_probed_stars({
                 :session_id  => Lacuna.session.id,
                 :building_id => oracle_id,
@@ -99,7 +101,8 @@ class InitStars < LacunaUtil::Task
                     :size     => body['size'],
                     :orbit    => body['orbit'],
                     :type     => body['type'],
-                    :ore_type => body['image'].gsub(/^[pag]|\-\d+/, ''),
+                    # p22-7 => p22, a2-6 => a2, g5-8 => g5.
+                    :ore_type => body['image'].gsub(/\-\d+/, ''),
                 }
 
                 unless body['empire'].nil?
