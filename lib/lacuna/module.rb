@@ -20,8 +20,21 @@ module Lacuna
 
             # Include session id in requests that need it
             if "#{post_module}/#{post_method}" != 'empire/login'
-                body[:params].unshift Session.get
+                # When the call uses named arguments the caller has to manually
+                # pass in the session id. If it isn't there assume we're doing
+                # a positional argument call and add the session id to the front.
+                if body[:params][0].class == Hash && body[:params][0][:session_id].nil?
+                    body[:params].unshift Lacuna.session.id
+                # This should be a normal call, in which case, add in the
+                # session id.
+                elsif body[:params][0].class != Hash
+                    body[:params].unshift Lacuna.session.id
+                end
             end
+
+            # This should get logged to a file.
+            # p "#{post_module}/#{post_method}"
+            # p body[:params]
 
             request.body = JSON.generate body
 
@@ -41,13 +54,13 @@ module Lacuna
 
         # Check that we're logged in, if not, get session a set up.
         def self.session_stuff
-            if !Session.valid?
+            if !Lacuna.session.valid?
                 res = self.send(Lacuna.url, 'empire', 'login', [
                     Lacuna.args[:name],
                     Lacuna.args[:password],
                     Lacuna.api_key,
                 ])
-                Session.set res['session_id']
+                Lacuna.session.id = res['session_id']
             else
                 # check time
                 return

@@ -17,35 +17,41 @@ require_all File.join(File.dirname(__FILE__), 'lacuna', 'extras')
 
 module Lacuna
 
+    # This is like an initialize method except we don't make a new instance.
     def self.connect(args)
         # Allow a custom server url, be specifying the API key used there but
         # allow the name of the server (eg: 'us1') to be used, which selects
         # the API key corresponding to US1.
-        @@api_key =
+        @api_key =
             if args[:api_key]
                 args[:api_key]
             elsif args[:server_name] && !args[:server_url]
                 API_KEYS[args[:server_name]]
             end
 
-        @@url =
+        @url =
             if args[:server_url]
                 args[:server_url]
             elsif args[:server_name]
                 File.join('https://', args[:server_name] + '.' + LACUNA_DOMAIN)
             end
 
-        @@args = args
+        @args = args
 
         # TODO: allow a sleep-period for each request
     end
 
-    @@url     = ''
-    @@args    = {}
-    @@api_key = ''
-    def self.url;     @@url;     end
-    def self.args;    @@args;    end
-    def self.api_key; @@api_key; end
+    @url     = ''
+    @args    = {}
+    @api_key = ''
+    @session = Session.new
+
+    class << self
+        attr_reader :url
+        attr_reader :args
+        attr_reader :api_key
+        attr_accessor :session
+    end
 
     class Empire < Lacuna::Extras::Empire
         @module_name = 'empire'

@@ -1,22 +1,11 @@
 # encoding: utf-8
 
 class Session
-    @@session = nil
+    @id = nil
+    attr_accessor :id
 
-    def self.set(val)
-        @@session = val
-    end
-
-    def self.end
-        self.set nil
-    end
-
-    def self.get
-        @@session
-    end
-
-    def self.valid?
+    def valid?
         # TODO: take into account the two hour session timeout.
-        !@@session.nil?
+        !self.id.nil?
     end
 end

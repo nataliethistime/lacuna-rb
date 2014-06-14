@@ -4,19 +4,20 @@ $LOAD_PATH.unshift File.dirname __FILE__
 
 require 'require_all'
 require 'json'
+require 'sequel'
 
 require 'lacuna_util/version'
 
 class LacunaUtil
     @@tasks = {}
-    @@config = {}
+    @config = {}
+    @root   = ''
+    @db     = {}
 
-    def self.config
-        @@config
-    end
-
-    def self.config=(obj)
-        @@config = obj
+    class << self
+        attr_accessor :config
+        attr_accessor :root
+        attr_accessor :db
     end
 
     def self.register_task(task_class)
@@ -39,9 +40,16 @@ class LacunaUtil
     end
 end
 
-# LOAD ALL THE CONFIGURATION OPTIONS!
-path = File.join(File.dirname(__FILE__), '..', 'config.json')
-LacunaUtil.config = JSON.parse File.read path
+ # There's pro'lly a better way to do this...
+arr = File.dirname(__FILE__).split File::SEPARATOR
+arr -= Array(arr.last)
+LacunaUtil.root = arr.join File::SEPARATOR
 
-# Load all the tasks
-require_all File.join(File.dirname(__FILE__), 'lacuna_util', 'task')
+# LOAD ALL THE CONFIGURATION OPTIONS!
+LacunaUtil.config = JSON.parse File.read File.join(LacunaUtil.root, 'config.json')
+
+LacunaUtil.db = Sequel.sqlite(File.join(LacunaUtil.root, 'lacuna_util.db'))
+
+# Load all the tasks and db tables
+require_all File.join(LacunaUtil.root, 'lib', 'lacuna_util', 'tables')
+require_all File.join(LacunaUtil.root, 'lib', 'lacuna_util', 'task')
