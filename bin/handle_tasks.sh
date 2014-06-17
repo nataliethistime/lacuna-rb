@@ -7,11 +7,16 @@
 ####
 
 
-gnome-terminal  -e "./daily_tasks.sh"
+./init_db.sh
+./daily_tasks.sh
 
 while :
 do
-    gnome-terminal -e "./hourly_tasks.sh"
+    ./hourly_tasks.sh
+    echo ""
+    echo ""
     echo "Taking a nap until the next run..."
     ruby -e "sleep 60 * 60"
+    echo ""
+    echo ""
 done
