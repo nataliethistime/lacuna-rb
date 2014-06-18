@@ -2,6 +2,13 @@
 
 module Lacuna
     class Module
+        #####
+        #
+        # NOTE: the performance of a HTTP request here is quite bad. A Gem
+        #   to  look at using could be https://github.com/typhoeus/typhoeus.
+        #   TODO!
+        #
+        #####
         def self.send(url, post_module, post_method, data)
             uri = URI.parse url
             http = Net::HTTP.new(uri.host, uri.port)

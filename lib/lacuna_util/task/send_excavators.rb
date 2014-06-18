@@ -86,10 +86,12 @@ class SendExcavators < LacunaUtil::Task
                         puts "No Excavators to send!"
                     else
                         reason = ship['reason'][1]
-                        # if reason =~ /in the jurisdiction of the space station/
-                        #     puts "#{target[:name]} is seized!"
-                        #     return
-                        if reason
+                        if reason =~ /from your empire or one is on the way/
+                            # There's either an Excavator already there or
+                            # it's traveling there.
+                            puts "Already Excavator on or heading to #{target[:name]}"
+                            # TODO we need to retry this request on a different target!
+                        else
                             puts "Unknown Excavator error!"
                             puts reason
                         end
