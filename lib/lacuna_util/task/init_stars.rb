@@ -11,7 +11,8 @@ class InitStars < LacunaUtil::Task
     # Note there are some attributes in empire we need (See the table definition
     #   to fully understand this - it's just how the server returns the data).
     # Extra note: the image value is used to calculate the planet type.
-    BODY_ATTRS = (LacunaUtil.db[:bodies].columns.map { |sym| sym.id2name }) + ['empire', 'image']
+    BODY_ATTRS = (LacunaUtil.db[:bodies].columns.map { |sym| sym.id2name }) +
+        ['empire', 'image', 'station']
 
     def _run(args, config)
 
@@ -110,6 +111,11 @@ class InitStars < LacunaUtil::Task
                     to_insert[:empire_name]      = body['empire']['name']
                     to_insert[:empire_alignment] = body['empire']['alignment']
                     to_insert[:occupied]         = true
+                end
+
+                unless body['station'].nil?
+                    match = body['station']['name'] =~ /^(S|Z)ASS\s\S+/
+                    to_insert[:enemy_seized] = match.nil?
                 end
 
                 bodies_db.insert to_insert

@@ -35,5 +35,6 @@ unless LacunaUtil.db.table_exists? :bodies
         String :empire_name
         String :empire_alignment
         FalseClass :occupied, :default => false
+        FalseClass :enemy_seized, :default => false
     end
 end
