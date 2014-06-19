@@ -9,17 +9,35 @@ class UpgradeBuildings < LacunaUtil::Task
     def args
         args = {
             :dry_run => false,
+            :skip    => '',
         }
+
         OptionParser.new do |opts|
+
             opts.on("-d", "--dry_run", "Run, showing actions, but not changing anything.") do
                 args[:dry_run] = true
             end
+
+            opts.on("-s", "--skip PLANET", "Skip one planet.") do |name|
+                args[:skip] = name.to_s
+            end
+
         end.parse!
+
         args
     end
 
     def _run(args, config)
         Lacuna::Empire.planets.each do |id, name|
+
+            # Give the screen some space..
+            print "\n\n"
+
+            if name == args[:skip]
+                puts "Skipping #{name} according to command line option..."
+                next
+            end
+
             catch :planet do
                 puts "Looking on #{name} for buildings to upgrade."
                 buildings = Lacuna::Body.get_buildings(id)['buildings']
@@ -35,7 +53,7 @@ class UpgradeBuildings < LacunaUtil::Task
 
                             # Do the dirty work
                             to_level = build['level'].to_i + 1
-                            puts "#{name}: Upgrading #{build['name']} to #{to_level}!"
+                            puts "Upgrading #{build['name']} to #{to_level}!"
                             next if args[:dry_run]
                             rv = to_upgrade.upgrade build['id']
 
@@ -55,11 +73,6 @@ class UpgradeBuildings < LacunaUtil::Task
                     end
                 end
             end
-
-            # Give the screen some space..
-            puts ''
-            puts ''
-            puts ''
         end
     end
 
