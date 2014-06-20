@@ -1,3 +1,3 @@
-ruby upgrade_buildings.rb --ship "-= The Shire =-"
+ruby upgrade_buildings.rb --skip "-= The Shire =-"
 ruby clean_mail.rb
 

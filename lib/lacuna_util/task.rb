@@ -16,7 +16,9 @@ class LacunaUtil
         def run
             task_name = self.class
             name = LacunaUtil.config['name']
+            puts ''
             puts "Running task #{task_name} as #{name}"
+            puts ''
             self._run(self.args || {}, LacunaUtil.config)
         end
     end
