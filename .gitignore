@@ -38,3 +38,4 @@ Gemfile.lock
 *.sublime-workspace
 config.json
 *.db
+/log/
