@@ -1,7 +1,0 @@
-MAILTO=""
-PATH=/home/vasari/lacuna-rb/bin
-
-# * * * * * ruby ./upgrade_buildings.rb --skip "-= The Shire =-" >> /home/vasari/lacuna-rb/log/log.log
-# * * * * * ruby ./clean_mail.rb >> /home/vasari/lacuna-rb/log/log.log
-
-# * * * * * ruby /home/vasari/lacuna-rb/bin/hourly_tasks.sh >> /home/vasari/lacuna-rb/log/log.log
