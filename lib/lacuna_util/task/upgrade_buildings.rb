@@ -10,6 +10,7 @@ class UpgradeBuildings < LacunaUtil::Task
         args = {
             :dry_run => false,
             :skip    => '',
+            :max_time => 5 * 24 * 60 * 60, # 5 days
         }
 
         OptionParser.new do |opts|
@@ -20,6 +21,10 @@ class UpgradeBuildings < LacunaUtil::Task
 
             opts.on("-s", "--skip PLANET", "Skip one planet.") do |name|
                 args[:skip] = name.to_s
+            end
+
+            opts.on("-m", "--max-time TIME", "Max build time (seconds).") do |time|
+                args[:max_time] = time.to_i
             end
 
         end.parse!

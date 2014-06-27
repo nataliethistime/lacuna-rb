@@ -40,6 +40,7 @@ class SendExcavators < LacunaUtil::Task
             puts "Looking on #{name} to send Excavators"
             buildings = Lacuna::Body.get_buildings(id)['buildings']
             arch = Lacuna::Body.find_building(buildings, 'Archaeology Ministry')
+            next if arch.nil?
             next unless arch['level'].to_i >= 11
 
             # Determine the number of excavators that need to be sent from this
@@ -57,9 +58,7 @@ class SendExcavators < LacunaUtil::Task
 
                 if target.nil?
                     puts "No more valid bodies to send Excavators to!"
-
-                    # Note: should this be an exit?
-                    break
+                    exit
                 end
 
                 # So the next trick here is to see if we can send an excavator
@@ -90,7 +89,10 @@ class SendExcavators < LacunaUtil::Task
                             # There's either an Excavator already there or
                             # it's traveling there.
                             puts "Already Excavator on or heading to #{target[:name]}"
-                            # TODO we need to retry this request on a different target!
+
+                            # Remove this body from the list.
+                            to_excavate.reject! { |key| key == target[:id] }
+                            redo # Retry. We'll select another Excavator and go again.
                         else
                             puts "Unknown Excavator error!"
                             puts reason
