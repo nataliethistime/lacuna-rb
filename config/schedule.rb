@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-set :output, "/home/vasari/lacuna-rb/log/output.log"
+set :output, ''
 job_type :task, "/usr/local/bin/ruby /home/vasari/lacuna-rb/bin/run.rb :task :output"
 
 every :hour do
@@ -12,7 +12,6 @@ every 6.hours do
     task 'MakeHalls'
 end
 
-# Shortly after every server reset (in GMT+10 time)
 every :reboot do
     task 'InitStars'
     task 'InitExcavators'
