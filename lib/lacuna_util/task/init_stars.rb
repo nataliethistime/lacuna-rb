@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 require 'lacuna_util/task'
+require 'lacuna_util/logger'
 
 class InitStars < LacunaUtil::Task
 
@@ -29,8 +30,8 @@ class InitStars < LacunaUtil::Task
         self.clear_old_data
         self.save_data(stars, bodies)
 
-        puts "Saved #{stars.size} stars."
-        puts "Saved #{bodies.size} bodies."
+        Logger.log "Saved #{stars.size} stars."
+        Logger.log "Saved #{bodies.size} bodies."
     end
 
     def get_stars_and_bodies(oracle_id)
@@ -40,7 +41,7 @@ class InitStars < LacunaUtil::Task
         page = 1
 
         while true
-            puts "Requesting page #{page}..."
+            Logger.log "Requesting page #{page}..."
 
             result = Lacuna::OracleOfAnid.get_probed_stars({
                 :session_id  => Lacuna.session.id,

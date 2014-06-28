@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 require 'lacuna_util/task'
+require 'lacuna_util/logger'
 
 class CleanMail < LacunaUtil::Task
 
@@ -12,7 +13,7 @@ class CleanMail < LacunaUtil::Task
         status = Lacuna::Empire.get_status
 
         if status['empire']['has_new_messages'].to_i == 0
-            puts "No messages to delete! You're all clear!"
+            Logger.log "No messages to delete! You're all clear!"
             return
         end
 
@@ -32,7 +33,7 @@ class CleanMail < LacunaUtil::Task
     def get_mail_to_trash(page, seen, tags)
         to_trash = []
         while true
-            puts "Checking page #{page}"
+            Logger.log "Checking page #{page}"
 
             inbox = Lacuna::Inbox.view_inbox({
                 :tags => tags,
@@ -55,7 +56,7 @@ class CleanMail < LacunaUtil::Task
     end
 
     def trash(to_trash = [])
-        puts "Trashing #{to_trash.size} messages... hang on tight, kid!"
+        Logger.log "Trashing #{to_trash.size} messages... hang on tight, kid!"
         Lacuna::Inbox.trash_messages to_trash
     end
 end

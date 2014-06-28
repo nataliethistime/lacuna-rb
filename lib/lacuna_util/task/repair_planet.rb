@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 require 'lacuna_util/task'
+require 'lacuna_util/logger'
 
 class RepairPlanet < LacunaUtil::Task
 
@@ -20,13 +21,13 @@ class RepairPlanet < LacunaUtil::Task
 
     def _run(args, config)
         if args[:planet] == ''
-            puts "No planet specified."
+            Logger.log "No planet specified."
             return
         end
 
         Lacuna::Empire.planets.each do |id, name|
             next unless name == args[:planet]
-            puts "Repairing buildings on #{args[:planet]}"
+            Logger.log "Repairing buildings on #{args[:planet]}"
 
             to_repair = []
 
@@ -39,9 +40,9 @@ class RepairPlanet < LacunaUtil::Task
 
             if to_repair.size > 0
                 repaired = Lacuna::Body.repair_list(id, to_repair)['buildings']
-                puts "Done. Refresh planet in-game to see results."
+                Logger.log "Done. Refresh planet in-game to see results."
             else
-                puts "No damaged buildings!"
+                Logger.log "No damaged buildings!"
             end
         end
     end

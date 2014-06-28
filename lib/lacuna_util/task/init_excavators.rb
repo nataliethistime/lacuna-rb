@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 require 'lacuna_util/task'
+require 'lacuna_util/logger'
 
 class InitExcavators < LacunaUtil::Task
 
@@ -12,7 +13,7 @@ class InitExcavators < LacunaUtil::Task
         LacunaUtil.db[:excavator_locations].delete
 
         Lacuna::Empire.planets.each do |id, name|
-            puts "Looking for Excavators servicing #{name}"
+            Logger.log "Looking for Excavators servicing #{name}"
 
             buildings = Lacuna::Body.get_buildings(id)['buildings']
             arch = Lacuna::Body.find_building(buildings, 'Archaeology Ministry')

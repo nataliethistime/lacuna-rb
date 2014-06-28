@@ -7,6 +7,7 @@ require 'json'
 require 'sequel'
 
 require 'lacuna_util/version'
+require 'lacuna_util/logger'
 
 class LacunaUtil
     @@tasks = {}
@@ -30,7 +31,7 @@ class LacunaUtil
         unless t.nil?
             t
         else
-            puts "No #{name} task!"
+            Lgger.log "No '#{name}' task!"
             exit
         end
     end

@@ -3,6 +3,7 @@
 require 'optparse'
 
 require 'lacuna_util/task'
+require 'lacuna_util/logger'
 
 class UpgradeBuildings < LacunaUtil::Task
 
@@ -39,18 +40,19 @@ class UpgradeBuildings < LacunaUtil::Task
             print "\n\n"
 
             if name == args[:skip]
-                puts "Skipping #{name} according to command line option..."
+                Logger.log "Skipping #{name} according to command line option..."
                 next
             end
 
             catch :planet do
-                puts "Looking on #{name} for buildings to upgrade."
+                Logger.log "Looking on #{name} for buildings to upgrade."
                 buildings = Lacuna::Body.get_buildings(id)['buildings']
 
                 # Skip this planet if the total build time is more than the max_time
                 # option and such we shouldn't add anything else to the build queue.
-                if self.get_build_time(buildings) >= args[:max_time]
-                    puts "Build queue full enough."
+                queue_time = self.get_build_queue_time(buildings)
+                if queue_time >= args[:max_time]
+                    Logger.log "Build queue full enough."
                     throw :planet
                 end
 
@@ -65,7 +67,7 @@ class UpgradeBuildings < LacunaUtil::Task
 
                             # Do the dirty work
                             to_level = build['level'].to_i + 1
-                            puts "Upgrading #{build['name']} to #{to_level}!"
+                            Logger.log "Upgrading #{build['name']} to #{to_level}!"
                             next if args[:dry_run] # Handle dry run.
                             rv = to_upgrade.upgrade build['id']
 
@@ -77,7 +79,7 @@ class UpgradeBuildings < LacunaUtil::Task
                                     # Move to the next planet.
                                     throw :planet
                                 else
-                                    puts 'Unknown Error'
+                                    Logger.log 'Unknown Error'
                                     p rv
                                 end
                             end
@@ -88,7 +90,7 @@ class UpgradeBuildings < LacunaUtil::Task
         end
     end
 
-    def get_build_time(buildings)
+    def get_build_queue_time(buildings)
         total = 0
         buildings.each do |id, building|
             unless building['pending_build'].nil?

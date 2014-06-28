@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 require 'lacuna_util/task'
+require 'lacuna_util/logger'
 
 class MakeHalls < LacunaUtil::Task
     # Array of the 4 recipes used to make Halls of Vrbansk
@@ -20,7 +21,7 @@ class MakeHalls < LacunaUtil::Task
         total = 0
 
         Lacuna::Empire.planets.each do |id, name|
-            puts "Checking on #{name}"
+            Logger.log "Checking on #{name}"
             buildings = Lacuna::Body.get_buildings(id)['buildings']
             archaeology = Lacuna::Body.find_building(buildings, 'Archaeology Ministry')
             next if archaeology.nil?
@@ -35,7 +36,7 @@ class MakeHalls < LacunaUtil::Task
 
                 next if number ==  0
 
-                puts "Making #{number} halls with #{list}"
+                Logger.log "Making #{number} halls with #{list}"
 
                 # Note: there is a limit of 5000 plans made per request.
                 #   I'll fix this 'issue' when it actually becomes one. :)
@@ -46,13 +47,13 @@ class MakeHalls < LacunaUtil::Task
             end
 
             if made > 0
-                puts "Made #{made} Halls on #{name}"
+                Logger.log "Made #{made} Halls on #{name}"
                 total += made
             end
         end
 
         if total > 0
-            puts "Finished making #{total} Halls of Vrbansk"
+            Logger.log "Finished making #{total} Halls of Vrbansk"
         end
     end
 end

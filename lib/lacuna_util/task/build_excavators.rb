@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 require 'lacuna_util/task'
+require 'lacuna_util/logger'
 
 class BuildExcavators < LacunaUtil::Task
 
@@ -15,7 +16,7 @@ class BuildExcavators < LacunaUtil::Task
     def _run(args, config)
 
         Lacuna::Empire.planets.each do |id, name|
-            puts "Looking on #{name} to build Excavators."
+            Logger.log "Looking on #{name} to build Excavators."
             buildings = Lacuna::Body.get_buildings(id)['buildings']
             sp = Lacuna::Body.find_building(buildings, 'Space Port')
             next if sp.nil?
@@ -25,12 +26,12 @@ class BuildExcavators < LacunaUtil::Task
 
             if count >= TARGET
                 # Skip if there's enough.
-                puts "Already #{count} built!"
+                Logger.log "Already #{count} built!"
                 next
             end
 
             build_count = TARGET - count
-            puts "Found #{count} Excavators."
+            Logger.log "Found #{count} Excavators."
             self.build_excavators(buildings, build_count)
         end
     end
@@ -41,7 +42,7 @@ class BuildExcavators < LacunaUtil::Task
 
         # Ensure that this planet can build an Excavator. (Requires L11 Archeology)
         if buildable['buildable']['excavator']['can'].to_i == 0
-            puts buildable['buildable']['excavator']['reason'][1]
+            Logger.log buildable['buildable']['excavator']['reason'][1]
             return
         end
 
@@ -55,12 +56,12 @@ class BuildExcavators < LacunaUtil::Task
         num_to_build = buildable['docks_available'] if num_to_build > buildable['docks_available']
 
         unless num_to_build > 0
-            puts "Not enough Shipyard or Space Port slots to build Excavators!"
+            Logger.log "Not enough Shipyard or Space Port slots to build Excavators!"
             return
         end
 
         # And now, let's do the deed.
-        puts "Building #{num_to_build} Excavators..."
+        Logger.log "Building #{num_to_build} Excavators..."
         Lacuna::Shipyard.build_ship(sy['id'], 'excavator', num_to_build)
     end
 end

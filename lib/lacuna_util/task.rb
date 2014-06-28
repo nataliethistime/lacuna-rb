@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 require 'lacuna'
+require 'lacuna_util/logger'
 
 class LacunaUtil
     class Task
@@ -16,9 +17,9 @@ class LacunaUtil
         def run
             task_name = self.class
             name = LacunaUtil.config['name']
-            puts ''
-            puts "Running task #{task_name} as #{name}"
-            puts ''
+            print "\n"
+            Logger.log "Running task #{task_name} as #{name}"
+            print "\n"
             self._run(self.args || {}, LacunaUtil.config)
         end
     end

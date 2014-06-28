@@ -3,6 +3,7 @@
 require 'optparse'
 
 require 'lacuna_util/task'
+require 'lacuna_util/logger'
 
 class SendExcavators < LacunaUtil::Task
 
@@ -37,7 +38,7 @@ class SendExcavators < LacunaUtil::Task
         end
 
         Lacuna::Empire.planets.each do |id, name|
-            puts "Looking on #{name} to send Excavators"
+            Logger.log "Looking on #{name} to send Excavators"
             buildings = Lacuna::Body.get_buildings(id)['buildings']
             arch = Lacuna::Body.find_building(buildings, 'Archaeology Ministry')
             next if arch.nil?
@@ -49,7 +50,7 @@ class SendExcavators < LacunaUtil::Task
             foo = excavators['travelling'].to_i + excavators['excavators'].size
             to_send = excavators['max_excavators'].to_i - foo
             next unless to_send > 0
-            puts "Attempting to send #{to_send} Excavators..."
+            Logger.log "Attempting to send #{to_send} Excavators..."
 
             to_send.times do
                 x = excavators['status']['body']['x'].to_i
@@ -57,7 +58,7 @@ class SendExcavators < LacunaUtil::Task
                 target = self.find_closest(to_excavate.values, x, y)
 
                 if target.nil?
-                    puts "No more valid bodies to send Excavators to!"
+                    Logger.log "No more valid bodies to send Excavators to!"
                     exit
                 end
 
@@ -82,20 +83,20 @@ class SendExcavators < LacunaUtil::Task
                     ship = unavailable.first
 
                     if ship.nil?
-                        puts "No Excavators to send!"
+                        Logger.log "No Excavators to send!"
                     else
                         reason = ship['reason'][1]
                         if reason =~ /from your empire or one is on the way/
                             # There's either an Excavator already there or
                             # it's traveling there.
-                            puts "Already Excavator on or heading to #{target[:name]}"
+                            Logger.log "Already Excavator on or heading to #{target[:name]}"
 
                             # Remove this body from the list.
                             to_excavate.reject! { |key| key == target[:id] }
                             redo # Retry. We'll select another Excavator and go again.
                         else
-                            puts "Unknown Excavator error!"
-                            puts reason
+                            Logger.log "Unknown Excavator error!"
+                            Logger.log reason
                         end
                     end
 
@@ -103,7 +104,7 @@ class SendExcavators < LacunaUtil::Task
                     return
                 end
 
-                puts "Sending Excavator to #{target[:name]}"
+                Logger.log "Sending Excavator to #{target[:name]}"
                 unless args[:dry_run]
                     rv = Lacuna::SpacePort.send_ship(ship['id'], {
                         :body_id => target[:id]
