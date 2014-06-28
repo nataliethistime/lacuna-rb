@@ -10,7 +10,7 @@ class UpgradeBuildings < LacunaUtil::Task
         args = {
             :dry_run => false,
             :skip    => '',
-            :max_time => 5 * 24 * 60 * 60, # 5 days
+            :max_time => 2 * 24 * 60 * 60, # 2 days
         }
 
         OptionParser.new do |opts|
@@ -47,6 +47,13 @@ class UpgradeBuildings < LacunaUtil::Task
                 puts "Looking on #{name} for buildings to upgrade."
                 buildings = Lacuna::Body.get_buildings(id)['buildings']
 
+                # Skip this planet if the total build time is more than the max_time
+                # option and such we shouldn't add anything else to the build queue.
+                if self.get_build_time(buildings) >= args[:max_time]
+                    puts "Build queue full enough."
+                    throw :planet
+                end
+
                 UPGRADES.each do |upgrade|
                     builds = Lacuna::Body.find_buildings(buildings, upgrade[:name])
                     next if builds.nil?
@@ -59,7 +66,7 @@ class UpgradeBuildings < LacunaUtil::Task
                             # Do the dirty work
                             to_level = build['level'].to_i + 1
                             puts "Upgrading #{build['name']} to #{to_level}!"
-                            next if args[:dry_run]
+                            next if args[:dry_run] # Handle dry run.
                             rv = to_upgrade.upgrade build['id']
 
                             unless rv['building'].nil?
@@ -79,6 +86,16 @@ class UpgradeBuildings < LacunaUtil::Task
                 end
             end
         end
+    end
+
+    def get_build_time(buildings)
+        total = 0
+        buildings.each do |id, building|
+            unless building['pending_build'].nil?
+                total += building['pending_build']['seconds_remaining'].to_i
+            end
+        end
+        total
     end
 
     UPGRADES = [
