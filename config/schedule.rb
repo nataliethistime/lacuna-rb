@@ -1,6 +1,8 @@
 # encoding: utf-8
 
-set :output, ''
+# Ignore all output because LacunaUtil now has a logger that takes care of all this.
+set :output, '/dev/null'
+
 job_type :task, "/usr/local/bin/ruby /home/vasari/lacuna-rb/bin/run.rb :task :output"
 
 every :hour do
