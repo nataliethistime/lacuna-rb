@@ -60,36 +60,36 @@ class UpgradeBuildings < LacunaUtil::Task
                     builds = builds.reverse
 
                     builds.each do |build|
-                        if upgrade[:level] > build['level'].to_i &&
-                            build['pending_build'].nil?
-                            to_upgrade = Lacuna::Buildings.url2class(build['url'])
+                        next unless upgrade[:level] > build['level'].to_i
+                        next unless build['pending_build'].nil?
 
-                            # Make sure the queue isn't too full.
-                            if queue_time >= args[:max_time]
-                                Logger.log "Build queue full enough."
+                        to_upgrade = Lacuna::Buildings.url2class(build['url'])
+
+                        # Make sure the queue isn't too full.
+                        if queue_time >= args[:max_time]
+                            Logger.log "Build queue full enough."
+                            throw :planet
+                        end
+
+                        # Do the dirty work
+                        to_level = build['level'].to_i + 1
+                        Logger.log "Upgrading #{build['name']} to #{to_level}!"
+                        next if args[:dry_run] # Handle dry run.
+                        rv = to_upgrade.upgrade build['id']
+
+                        unless rv['building'].nil?
+                            # Add this building to the total time so that we
+                            # don't just fill up the build queue isn't of stopping
+                            # at the right time.
+                            queue_time += rv['building']['pending_build']['seconds_remaining'].to_i
+                        else
+                            # Handle the multiple errors here!
+                            if rv['message'] =~ /no room left in the build queue/
+                                # Move to the next planet.
                                 throw :planet
-                            end
-
-                            # Do the dirty work
-                            to_level = build['level'].to_i + 1
-                            Logger.log "Upgrading #{build['name']} to #{to_level}!"
-                            next if args[:dry_run] # Handle dry run.
-                            rv = to_upgrade.upgrade build['id']
-
-                            unless rv['building'].nil?
-                                # Add this building to the total time so that we
-                                # don't just fill up the build queue isn't of stopping
-                                # at the right time.
-                                queue_time += rv['building']['pending_build']['seconds_remaining'].to_i
                             else
-                                # Handle the multiple errors here!
-                                if rv['message'] =~ /no room left in the build queue/
-                                    # Move to the next planet.
-                                    throw :planet
-                                else
-                                    Logger.log 'Unknown Error'
-                                    p rv
-                                end
+                                Logger.log 'Unknown Error'
+                                p rv
                             end
                         end
                     end
