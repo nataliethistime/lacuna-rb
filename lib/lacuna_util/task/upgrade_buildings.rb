@@ -55,6 +55,10 @@ class UpgradeBuildings < LacunaUtil::Task
                     builds = Lacuna::Body.find_buildings(buildings, upgrade[:name])
                     next if builds.nil?
 
+                    # find_buildings returns the buildings sorted. We want to
+                    # upgrade the lower levels first. So, reverse the list.
+                    builds = builds.reverse
+
                     builds.each do |build|
                         if upgrade[:level] > build['level'].to_i &&
                             build['pending_build'].nil?
