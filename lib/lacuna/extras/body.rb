@@ -4,13 +4,7 @@ module Lacuna
     class Extras
         class Body < Lacuna::Module
             def self.find_building(buildings, name)
-                match = self.find_buildings(buildings, name)
-
-                unless match.nil?
-                    match.first
-                else
-                    nil
-                end
+                Array(self.find_buildings(buildings, name)).first
             end
 
             def self.find_buildings(buildings, name)
@@ -20,11 +14,7 @@ module Lacuna
                     building['name'] == name
                 end.values
 
-                if matches.size > 0
-                    matches.sort_by { |match| match['level'].to_i }
-                else
-                    nil
-                end
+                Array(matches).sort_by { |match| match['level'].to_i }
             end
         end
     end
