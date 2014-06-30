@@ -5,9 +5,11 @@ STDOUT.sync = true
 
 class Logger
     @messages = []
+    @log_path = ''
 
     class << self
         attr_reader :messages
+        attr_accessor :log_path
     end
 
     def self.log(message)
@@ -33,11 +35,16 @@ class Logger
         line = pieces[1]
         "#{file}:#{line}"
     end
+
+    def self.init
+        @log_path = File.join(LacunaUtil.root, 'log', 'output.log')
+    end
+
+    def self.logs_this_run
+        (@messages + ["\n\n"]).join "\n"
+    end
 end
 
 at_exit do
-    # Write all the messages to the log file
-    path = File.join(LacunaUtil.root, 'log', 'output.log')
-    # Add some newlines to the end for ease of reading.
-    File.write(path, (Logger.messages + ["\n\n"]).join("\n"), mode: 'a')
+    File.write(Logger.log_path, Logger.logs_this_run, mode: 'a')
 end

@@ -4,18 +4,16 @@
 set :output, '/dev/null'
 
 job_type :task, "/usr/local/bin/ruby /home/vasari/lacuna-rb/bin/run.rb :task :output"
+job_type :tasks, "/usr/local/bin/ruby /home/vasari/lacuna-rb/bin/run.rb :task :output"
 
 every :hour do
-    task 'UpgradeBuildings'
-    task 'CleanMail'
+    tasks 'UpgradeBuildings CleanMail'
 end
 
-every 6.hours do
-    task 'MakeHalls'
+every :day, :at => '4:20pm' do
+    tasks 'InitStars InitExcavators SendExcavators MakeHalls'
+end
+
+every :day, :at => '4:40pm' do
     task 'SendLog'
-end
-
-every :reboot do
-    task 'InitStars'
-    task 'InitExcavators'
 end

@@ -48,8 +48,9 @@ LacunaUtil.root = arr.join File::SEPARATOR
 
 # LOAD ALL THE CONFIGURATION OPTIONS!
 LacunaUtil.config = JSON.parse File.read File.join(LacunaUtil.root, 'config.json')
-
 LacunaUtil.db = Sequel.sqlite(File.join(LacunaUtil.root, 'lacuna_util.db'))
+
+Logger.init
 
 # Load all the tasks and db tables
 require_all File.join(LacunaUtil.root, 'lib', 'lacuna_util', 'tables')
