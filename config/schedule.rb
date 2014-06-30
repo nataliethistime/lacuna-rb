@@ -12,6 +12,7 @@ end
 
 every 6.hours do
     task 'MakeHalls'
+    task 'SendLog'
 end
 
 every :reboot do

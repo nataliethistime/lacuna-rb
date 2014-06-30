@@ -48,13 +48,8 @@ class UpgradeBuildings < LacunaUtil::Task
                 Logger.log "Looking on #{name} for buildings to upgrade."
                 buildings = Lacuna::Body.get_buildings(id)['buildings']
 
-                # Skip this planet if the total build time is more than the max_time
-                # option and such we shouldn't add anything else to the build queue.
+                # Save total build queue time for later.
                 queue_time = self.get_build_queue_time(buildings)
-                if queue_time >= args[:max_time]
-                    Logger.log "Build queue full enough."
-                    throw :planet
-                end
 
                 UPGRADES.each do |upgrade|
                     builds = Lacuna::Body.find_buildings(buildings, upgrade[:name])
@@ -65,6 +60,12 @@ class UpgradeBuildings < LacunaUtil::Task
                             build['pending_build'].nil?
                             to_upgrade = Lacuna::Buildings.url2class(build['url'])
 
+                            # Make sure the queue isn't too full.
+                            if queue_time >= args[:max_time]
+                                Logger.log "Build queue full enough."
+                                throw :planet
+                            end
+
                             # Do the dirty work
                             to_level = build['level'].to_i + 1
                             Logger.log "Upgrading #{build['name']} to #{to_level}!"
@@ -72,7 +73,10 @@ class UpgradeBuildings < LacunaUtil::Task
                             rv = to_upgrade.upgrade build['id']
 
                             unless rv['building'].nil?
-                                # I guess log down the  building upgrade???
+                                # Add this building to the total time so that we
+                                # don't just fill up the build queue isn't of stopping
+                                # at the right time.
+                                queue_time += rv['building']['pending_build']['seconds_remaining'].to_i
                             else
                                 # Handle the multiple errors here!
                                 if rv['message'] =~ /no room left in the build queue/
