@@ -31,7 +31,7 @@ class LacunaUtil
         unless t.nil?
             t
         else
-            Lgger.log "No '#{name}' task!"
+            Logger.log "No '#{name}' task!"
             exit
         end
     end

@@ -65,8 +65,9 @@ class UpgradeBuildings < LacunaUtil::Task
 
                         to_upgrade = Lacuna::Buildings.url2class(build['url'])
 
-                        # Make sure the queue isn't too full.
-                        if queue_time >= args[:max_time]
+                        # Make sure the queue isn't too full. Note: in dry-run,
+                        # this check doesn't occur.
+                        if queue_time >= args[:max_time] && !args[:dry_run]
                             Logger.log "Build queue full enough."
                             throw :planet
                         end
@@ -125,39 +126,6 @@ class UpgradeBuildings < LacunaUtil::Task
         {
             :name  => 'Development Ministry',
             :level => 30,
-        },
-        {
-            :name  => 'Trade Ministry',
-            :level => 30,
-        },
-        {
-            :name  => 'Subspace Transporter',
-            :level => 30,
-        },
-        {
-            :name  => 'Planetary Command Center',
-            :level => 30,
-        },
-
-        #########################
-        ### Space Station Lab ###
-        #########################
-
-        {
-            :name  => 'Space Station Lab (A)',
-            :level => 20,
-        },
-        {
-            :name  => 'Space Station Lab (B)',
-            :level => 20,
-        },
-        {
-            :name  => 'Space Station Lab (C)',
-            :level => 20,
-        },
-        {
-            :name  => 'Space Station Lab (D)',
-            :level => 20,
         },
 
         #################
@@ -234,12 +202,37 @@ class UpgradeBuildings < LacunaUtil::Task
             :level => 30,
         },
 
+        #########################
+        ### Space Station Lab ###
+        #########################
+
+        {
+            :name  => 'Space Station Lab (A)',
+            :level => 20,
+        },
+        {
+            :name  => 'Space Station Lab (B)',
+            :level => 20,
+        },
+        {
+            :name  => 'Space Station Lab (C)',
+            :level => 20,
+        },
+        {
+            :name  => 'Space Station Lab (D)',
+            :level => 20,
+        },
+
         ################
         ### Ships!!! ###
         ################
 
         {
             :name  => 'Shipyard',
+            :level => 30,
+        },
+        {
+            :name  => 'Trade Ministry',
             :level => 30,
         },
         {
@@ -275,6 +268,10 @@ class UpgradeBuildings < LacunaUtil::Task
             :level => 30,
         },
         {
+            :name  => 'Planetary Command Center',
+            :level => 30,
+        },
+        {
             :name  => 'Waste Sequestration Well',
             :level => 30,
         },
@@ -295,8 +292,8 @@ class UpgradeBuildings < LacunaUtil::Task
             :name => 'Entertainment District',
             :level => 30,
         },
-        { ## Not sure why I have one of these, but oh well, upgrade it!
-            :name => 'Luxury Housing',
+        {
+            :name  => 'Subspace Transporter',
             :level => 30,
         },
         {
