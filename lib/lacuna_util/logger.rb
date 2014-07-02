@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+require 'colorize'
+
 # Auto flush STDOUT
 STDOUT.sync = true
 
@@ -15,14 +17,14 @@ class Logger
     def self.log(message)
         klass = self.get_klass(caller)
         @messages << self.format(klass, message)
-        STDOUT.puts @messages.last
+        STDOUT.puts @messages.last.colorize :green
     end
 
     def self.error(message)
         klass = self.get_klass(caller)
         @messages << self.format(klass, message)
         # TODO: make this colored red or something!
-        STDOUT.puts @messages.last
+        STDOUT.puts @messages.last.colorize :red
     end
 
     def self.debug(message)
@@ -31,8 +33,8 @@ class Logger
     end
 
     def self.format(klass, message)
-        time = Time.now.strftime '%A, %d %B %Y - %H:%M:%S'
-        "#{time} (#{klass}): #{message}"
+        time = Time.now.strftime '%d/%m|%H:%M:%S'
+        "#{time}~#{klass}: #{message}"
     end
 
     def self.get_klass(caller)
