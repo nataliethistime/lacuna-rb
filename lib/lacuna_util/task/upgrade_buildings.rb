@@ -78,9 +78,13 @@ class UpgradeBuildings < LacunaUtil::Task
                         begin
                             to_upgrade = Lacuna::Buildings.url2class(build['url'])
                             rv = to_upgrade.upgrade build['id']
-                            queue_time += rv['building']['pending_build']['seconds_remaining'].to_i
+
+                            # Time remaining includes the time for all build before
+                            # this one. (All of them).
+                            queue_time = rv['building']['pending_build']['seconds_remaining'].to_i
+
                         rescue Lacuna::RPCException => e
-                            # Handle the multiple errors here!
+
                             if e.message =~ /There\'s no room left in the build queue\./i
                                 # Move to the next planet.
                                 Logger.error "No room left in the build queue here."
