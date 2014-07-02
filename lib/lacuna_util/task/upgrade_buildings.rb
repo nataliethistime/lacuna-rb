@@ -208,6 +208,15 @@ class UpgradeBuildings < LacunaUtil::Task
             :level => 30,
         },
 
+        ###############
+        ### Defense ###
+        ###############
+
+        {
+            :name  => 'Shield Against Weapons',
+            :level => 30,
+        },
+
         #########################
         ### Space Station Lab ###
         #########################
@@ -286,10 +295,6 @@ class UpgradeBuildings < LacunaUtil::Task
         ### All The Rest!!! ###
         #######################
 
-        {
-            :name  => 'Shield Against Weapons',
-            :level => 30,
-        },
         {
             :name => 'Mission Command',
             :level => 30,
