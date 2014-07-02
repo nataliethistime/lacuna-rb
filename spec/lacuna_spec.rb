@@ -32,11 +32,16 @@ describe Lacuna::PlanetaryCommand do
     end
 
     it 'should be able to send a request' do
-        pcc = Lacuna::PlanetaryCommand
-        result = pcc.view_plans
-        expect(result).to_not be_nil
-        # We didn't provide a building id, do it'll throw an error.
-        expect(result['code']).to_not be_nil
+        begin
+            # We didn't provide a building id, do it'll throw an exception.
+            result = Lacuna::PlanetaryCommand.view_plans
+        rescue Lacuna::RPCException => e
+            expect(e).to_not be_nil
+            expect(e.code).to_not be_nil
+            expect(e.message).to_not be_nil
+            expect(e.data).to_not be_nil
+            expect(e.object).to_not be_nil
+        end
     end
 end
 
@@ -57,5 +62,21 @@ describe Lacuna::Module, '#send' do
 
         body = Lacuna::Body.get_status status['empire']['home_planet_id']
         expect(body['body']['name']).to eq 'Ruby'
+    end
+
+    it 'should throw an exception on bad requests' do
+        begin
+            Lacuna::Body.get_status "this is not a valid id"
+            expect(true).to eq false # We shouldn't get here.
+        rescue Lacuna::RPCException => e
+            # We should get here.
+            expect(true).to eq true
+            expect(e.class).to eq Lacuna::RPCException
+            expect(e).to_not be_nil
+            expect(e.code).to_not be_nil
+            expect(e.message).to_not be_nil
+            expect(e.data).to_not be_nil
+            expect(e.object).to_not be_nil
+        end
     end
 end
