@@ -18,6 +18,13 @@ class Logger
         STDOUT.puts @messages.last
     end
 
+    def self.error(message)
+        klass = self.get_klass(caller)
+        @messages << self.format(klass, message)
+        # TODO: make this colored red or something!
+        STDOUT.puts @messages.last
+    end
+
     def self.debug(message)
         klass = self.get_klass(caller)
         @messages << self.format(klass, message)

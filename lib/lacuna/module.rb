@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+require 'lacuna/exception'
+
 module Lacuna
     class Module
         #####
@@ -51,15 +53,14 @@ module Lacuna
             if rv['result']
                 rv['result']
             elsif rv['error']
-                # TODO: throw error?
-                p rv['error']
-                rv['error']
+                raise Lacuna::RPCException, rv['error']
             else
+                # Some requests don't have a result block. Eg, Empire#is_name_available
                 rv
             end
         end
 
-        # Check that we're logged in, if not, get session a set up.
+        # Check that we're logged in, if not, get session set up.
         def self.session_stuff
             if !Lacuna.session.valid?
                 res = self.send(Lacuna.url, 'empire', 'login', [
@@ -69,7 +70,6 @@ module Lacuna
                 ])
                 Lacuna.session.id = res['session_id']
             else
-                # check time
                 return
             end
         end

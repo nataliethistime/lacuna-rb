@@ -51,8 +51,6 @@ class UpgradeBuildings < LacunaUtil::Task
                 # Save total build queue time for later.
                 queue_time = self.get_build_queue_time(buildings)
 
-                puts "queue : #{queue_time}, max : #{args[:max_time]}"
-
                 UPGRADES.each do |upgrade|
                     builds = Lacuna::Body.find_buildings(buildings, upgrade[:name])
                     next if builds.nil?
@@ -65,8 +63,6 @@ class UpgradeBuildings < LacunaUtil::Task
                         next unless upgrade[:level] > build['level'].to_i
                         next unless build['pending_build'].nil?
 
-                        to_upgrade = Lacuna::Buildings.url2class(build['url'])
-
                         # Make sure the queue isn't too full. Note: in dry-run,
                         # this check doesn't occur.
                         if queue_time >= args[:max_time] && !args[:dry_run]
@@ -78,21 +74,23 @@ class UpgradeBuildings < LacunaUtil::Task
                         to_level = build['level'].to_i + 1
                         Logger.log "Upgrading #{build['name']} to #{to_level}!"
                         next if args[:dry_run] # Handle dry run.
-                        rv = to_upgrade.upgrade build['id']
 
-                        unless rv['building'].nil?
-                            # Add this building to the total time so that we
-                            # don't just fill up the build queue isn't of stopping
-                            # at the right time.
+                        begin
+                            to_upgrade = Lacuna::Buildings.url2class(build['url'])
+                            rv = to_upgrade.upgrade build['id']
                             queue_time += rv['building']['pending_build']['seconds_remaining'].to_i
-                        else
+                        rescue Lacuna::RPCException => e
                             # Handle the multiple errors here!
-                            if rv['message'] =~ /no room left in the build queue/
+                            if e.message =~ /There\'s no room left in the build queue\./i
                                 # Move to the next planet.
+                                Logger.error "No room left in the build queue here."
                                 throw :planet
+                            elsif e.message =~ /not enough \S+ in storage to build this\./i
+                                # Try a different upgrade on this planet.
+                                Logger.error "Cannot afford this upgrade."
+                                next
                             else
-                                Logger.log 'Unknown Error'
-                                p rv
+                                raise Lacuna::TaskException, e.object
                             end
                         end
                     end
