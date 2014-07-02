@@ -51,6 +51,8 @@ class UpgradeBuildings < LacunaUtil::Task
                 # Save total build queue time for later.
                 queue_time = self.get_build_queue_time(buildings)
 
+                puts "queue : #{queue_time}, max : #{args[:max_time]}"
+
                 UPGRADES.each do |upgrade|
                     builds = Lacuna::Body.find_buildings(buildings, upgrade[:name])
                     next if builds.nil?
@@ -100,13 +102,15 @@ class UpgradeBuildings < LacunaUtil::Task
     end
 
     def get_build_queue_time(buildings)
-        total = 0
+        times = []
         buildings.each do |id, building|
             unless building['pending_build'].nil?
-                total += building['pending_build']['seconds_remaining'].to_i
+                times << building['pending_build']['seconds_remaining'].to_i
             end
         end
-        total
+
+        # The last item in the queue will include the times of all the other builds.
+        times.sort.last || 0
     end
 
     UPGRADES = [
