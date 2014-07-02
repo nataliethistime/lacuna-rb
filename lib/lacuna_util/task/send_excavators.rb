@@ -37,6 +37,12 @@ class SendExcavators < LacunaUtil::Task
             to_excavate.reject! { |key| key == excav[:id] }
         end
 
+        # Save a few RPCs and report the error here, if possible.
+        unless to_excavate.size > 0
+            Logger.error "No valid bodies to send Excavators to!"
+            return
+        end
+
         Lacuna::Empire.planets.each do |id, name|
             Logger.log "Looking on #{name} to send Excavators"
             buildings = Lacuna::Body.get_buildings(id)['buildings']
@@ -58,8 +64,8 @@ class SendExcavators < LacunaUtil::Task
                 target = self.find_closest(to_excavate.values, x, y)
 
                 if target.nil?
-                    Logger.log "No more valid bodies to send Excavators to!"
-                    exit
+                    Logger.error "No more valid bodies to send Excavators to!"
+                    return
                 end
 
                 # So the next trick here is to see if we can send an excavator
