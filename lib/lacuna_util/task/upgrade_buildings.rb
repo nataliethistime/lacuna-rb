@@ -123,11 +123,7 @@ class UpgradeBuildings < LacunaUtil::Task
         end
 
         # Sort out all the data so it can be put into a table.
-        rows = []
-        successful_upgrades.sort_by! { |obj| [obj[:planet], obj[:name], obj[:level]] }
-        successful_upgrades.each do |h|
-            rows << h.values_at(:planet, :name, :level)
-        end
+        successful_upgrades.sort_by! { |obj| obj.values_at(:planet, :name, :level) }
 
         table = Terminal::Table.new do
             if args[:dry_run]
@@ -137,7 +133,16 @@ class UpgradeBuildings < LacunaUtil::Task
             end
 
             self.headings = %w(Planet Name Level)
-            self.rows = rows
+
+            last_checked_name = successful_upgrades.first[:planet]
+            successful_upgrades.each do |upgrade|
+                if upgrade[:planet] != last_checked_name
+                    self.add_separator
+                    last_checked_name = upgrade[:planet]
+                end
+
+                self.add_row upgrade.values_at(:planet, :name, :level)
+            end
 
             self.add_separator
             self.add_row ['TOTAL', '', rows.size]
