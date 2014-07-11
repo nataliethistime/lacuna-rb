@@ -7,7 +7,8 @@ job_type :task, "/usr/local/bin/ruby /home/vasari/lacuna-rb/bin/run.rb :task :ou
 job_type :tasks, "/usr/local/bin/ruby /home/vasari/lacuna-rb/bin/run.rb :task :output"
 
 every :hour do
-    tasks 'UpgradeBuildings CleanMail'
+    # task 'UpgradeBuildings --skip "-= The Shire =-"'
+    task 'CleanMail'
 end
 
 every :day, :at => '4:20pm' do

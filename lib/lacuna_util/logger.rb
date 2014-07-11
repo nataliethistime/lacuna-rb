@@ -20,6 +20,11 @@ class Logger
         STDOUT.puts @messages.last.colorize :green
     end
 
+    def self.log_raw(message)
+        @messages << message
+        STDOUT.puts message
+    end
+
     def self.error(message)
         klass = self.get_klass(caller)
         @messages << self.format(klass, message)

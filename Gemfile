@@ -7,3 +7,4 @@ gem 'sequel', '~> 4.11.0'
 gem 'whenever', :require => false
 
 gem 'colorize', '~> 0.7.3'
+gem 'terminal-table', '~> 1.4.5'

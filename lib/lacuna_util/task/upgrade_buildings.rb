@@ -5,6 +5,8 @@ require 'optparse'
 require 'lacuna_util/task'
 require 'lacuna_util/logger'
 
+require 'terminal-table'
+
 class UpgradeBuildings < LacunaUtil::Task
 
     def args
@@ -34,6 +36,10 @@ class UpgradeBuildings < LacunaUtil::Task
     end
 
     def _run(args, config)
+
+        # The array of successful upgrades. Used to generate a pretty table at the end.
+        successful_upgrades = []
+
         Lacuna::Empire.planets.each do |id, name|
 
             # Give the screen some space..
@@ -73,15 +79,29 @@ class UpgradeBuildings < LacunaUtil::Task
                         # Do the dirty work
                         to_level = build['level'].to_i + 1
                         Logger.log "Upgrading #{build['name']} to #{to_level}!"
-                        next if args[:dry_run] # Handle dry run.
+
+                        if args[:dry_run]
+                            successful_upgrades << {
+                                :level => to_level,
+                                :planet => name,
+                                :name => upgrade[:name],
+                            }
+                            next
+                        end
 
                         begin
                             to_upgrade = Lacuna::Buildings.url2class(build['url'])
                             rv = to_upgrade.upgrade build['id']
 
-                            # Time remaining includes the time for all build before
+                            # Time remaining includes the time for all builds before
                             # this one. (All of them).
                             queue_time = rv['building']['pending_build']['seconds_remaining'].to_i
+
+                            successful_upgrades << {
+                                :level => to_level,
+                                :planet => name,
+                                :name => upgrade[:name],
+                            }
 
                         rescue Lacuna::RPCException => e
 
@@ -101,6 +121,27 @@ class UpgradeBuildings < LacunaUtil::Task
                 end
             end
         end
+
+        # Sort out all the data so it can be put into a table.
+        rows = []
+        successful_upgrades.sort_by! { |obj| [obj[:planet], obj[:name], obj[:level]] }
+        successful_upgrades.each do |h|
+            rows << h.values_at(:planet, :name, :level)
+        end
+
+        table = Terminal::Table.new do
+            if args[:dry_run]
+                self.title = 'Possible Upgrades (DRY RUN)'
+            else
+                self.title = 'Upgrades in Progress'
+            end
+
+            self.headings = %w(Planet Name Level)
+            self.rows = rows
+        end
+
+        # Finally, draw the table to the terminal.
+        Logger.log_raw table.to_s
     end
 
     def get_build_queue_time(buildings)
