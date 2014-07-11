@@ -138,6 +138,9 @@ class UpgradeBuildings < LacunaUtil::Task
 
             self.headings = %w(Planet Name Level)
             self.rows = rows
+
+            self.add_separator
+            self.add_row ['TOTAL', '', rows.size]
         end
 
         # Finally, draw the table to the terminal.
