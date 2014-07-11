@@ -61,7 +61,7 @@ describe Lacuna::Module, '#send' do
         expect(status['empire']['name']).to eq 'lacuna-rb Test Account'
 
         body = Lacuna::Body.get_status status['empire']['home_planet_id']
-        expect(body['body']['name']).to eq 'Ruby'
+        expect(body['body']['name']).to eq '___Ruby|ybuR___'
     end
 
     it 'should throw an exception on bad requests' do
