@@ -3,6 +3,10 @@
 module Lacuna
     class Extras
         class Body < Lacuna::Module
+            def self.find_highest_building(buildings, name)
+                Array(self.find_buildings(buildings, name)).reverse.first
+            end
+
             def self.find_building(buildings, name)
                 Array(self.find_buildings(buildings, name)).first
             end

@@ -37,7 +37,7 @@ class BuildExcavators < LacunaUtil::Task
     end
 
     def build_excavators(buildings, num_to_build)
-        sy = Lacuna::Body.find_building(buildings, 'Shipyard')
+        sy = Lacuna::Body.find_highest_building(buildings, 'Shipyard')
         buildable = Lacuna::Shipyard.get_buildable(sy['id'])
 
         # Ensure that this planet can build an Excavator. (Requires L11 Archeology)
