@@ -113,6 +113,10 @@ class UpgradeBuildings < LacunaUtil::Task
                                 # Try a different upgrade on this planet.
                                 Logger.error "Cannot afford this upgrade."
                                 next
+                            elsif e.message =~ /\S+ is currently offline\./i
+                                # damaged buildings
+                                Logger.error "There are damaged buildings on #{name}"
+                                throw :planet
                             else
                                 raise Lacuna::TaskException, e.object
                             end

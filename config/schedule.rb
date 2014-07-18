@@ -8,7 +8,7 @@ job_type :tasks, "/usr/local/bin/ruby /home/vasari/lacuna-rb/bin/run.rb :task :o
 
 every :hour do
     task 'BuildExcavators'
-    task 'UpgradeBuildings'
+    task 'UpgradeBuildings --skip="+:: Aragorn ::+"'
     task 'CleanMail'
 end
 
