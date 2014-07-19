@@ -12,7 +12,7 @@ class UpgradeBuildings < LacunaUtil::Task
     def args
         args = {
             :dry_run => false,
-            :skip    => '',
+            :skip    => [],
             :max_time => 2 * 24 * 60 * 60, # 2 days
         }
 
@@ -22,8 +22,8 @@ class UpgradeBuildings < LacunaUtil::Task
                 args[:dry_run] = true
             end
 
-            opts.on("-s", "--skip PLANET", "Skip one planet.") do |name|
-                args[:skip] = name.to_s
+            opts.on("-s", "--skip PLANET", "Skip a planet.") do |name|
+                args[:skip] << name.to_s
             end
 
             opts.on("-m", "--max-time TIME", "Max build time (seconds).") do |time|
@@ -45,7 +45,7 @@ class UpgradeBuildings < LacunaUtil::Task
             # Give the screen some space..
             print "\n\n"
 
-            if name == args[:skip]
+            if args[:skip].include? name
                 Logger.log "Skipping #{name} according to command line option..."
                 next
             end
@@ -138,7 +138,7 @@ class UpgradeBuildings < LacunaUtil::Task
 
             self.headings = %w(Planet Name Level)
 
-            last_checked_name = successful_upgrades.first[:planet]
+            last_checked_name = (successful_upgrades.first || {})[:planet]
             successful_upgrades.each do |upgrade|
                 if upgrade[:planet] != last_checked_name
                     self.add_separator
