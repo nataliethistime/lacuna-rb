@@ -10,13 +10,12 @@ to_run = []
 
 # Preemptively check each task the user specifies and try to report errors.
 tasks.each do |name|
-    next if name[0] == '-' # Skip command line arguments
 
-    # LacunaUtil will stop the script if the task doesn't exist
-    task = LacunaUtil.task(name)
+    unless LacunaUtil.has_task? name
+        next
+    end
 
-    # If we didn't get any errors, push it into the array that will get run through later.
-    to_run << task
+    to_run << LacunaUtil.task(name)
 end
 
 
