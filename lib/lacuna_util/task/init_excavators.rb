@@ -18,6 +18,7 @@ class InitExcavators < LacunaUtil::Task
             buildings = Lacuna::Body.get_buildings(id)['buildings']
             arch = Lacuna::Body.find_building(buildings, 'Archaeology Ministry')
             next if arch.nil?
+            next unless arch['efficiency'].to_i == 100
 
             excavators = Lacuna::Archaeology.view_excavators(arch['id'])['excavators']
 

@@ -25,6 +25,7 @@ class MakeHalls < LacunaUtil::Task
             buildings = Lacuna::Body.get_buildings(id)['buildings']
             archaeology = Lacuna::Body.find_building(buildings, 'Archaeology Ministry')
             next if archaeology.nil?
+            next unless archaeology['efficiency'].to_i == 100
             inventory = Lacuna::Archaeology.get_inventory(archaeology['id'])
 
             made = 0
@@ -40,8 +41,6 @@ class MakeHalls < LacunaUtil::Task
 
                 # Note: there is a limit of 5000 plans made per request.
                 #   I'll fix this 'issue' when it actually becomes one. :)
-                #   For the moment just run the script as many times as you
-                #   need to make all the halls.
                 rs = Lacuna::Archaeology.assemble_glyphs(archaeology['id'], recipe, number)
                 made += rs['quantity']
             end
