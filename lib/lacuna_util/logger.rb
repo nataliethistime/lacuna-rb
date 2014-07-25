@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 require 'colorize'
+require 'fileutils'
 
 # Auto flush STDOUT
 STDOUT.sync = true
@@ -28,7 +29,6 @@ class Logger
     def self.error(message)
         klass = self.get_klass(caller)
         @messages << self.format(klass, message)
-        # TODO: make this colored red or something!
         STDOUT.puts @messages.last.colorize :red
     end
 
@@ -51,7 +51,9 @@ class Logger
     end
 
     def self.init
-        @log_path = File.join(LacunaUtil.root, 'log', 'output.log')
+        dir = File.join(LacunaUtil.root, 'log')
+        FileUtils.mkdir_p dir
+        @log_path = File.join(dir, 'output.log')
     end
 
     def self.logs_this_run
@@ -61,4 +63,5 @@ end
 
 at_exit do
     File.write(Logger.log_path, Logger.logs_this_run, mode: 'a')
+    # TODO: when an error is thrown, it's not displayed in the log.
 end

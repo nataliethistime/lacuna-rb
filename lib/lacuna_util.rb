@@ -46,11 +46,18 @@ arr = File.dirname(__FILE__).split File::SEPARATOR
 arr -= Array(arr.last)
 LacunaUtil.root = arr.join File::SEPARATOR
 
-# LOAD ALL THE CONFIGURATION OPTIONS!
-LacunaUtil.config = JSON.parse File.read File.join(LacunaUtil.root, 'config.json')
-LacunaUtil.db = Sequel.sqlite(File.join(LacunaUtil.root, 'lacuna_util.db'))
-
 Logger.init
+
+# LOAD ALL THE CONFIGURATION OPTIONS!
+path = File.join(LacunaUtil.root, 'config.json')
+
+unless File.exists? path
+    Logger.error 'No config.json file setup!'
+    exit
+end
+
+LacunaUtil.config = JSON.parse File.read path
+LacunaUtil.db = Sequel.sqlite(File.join(LacunaUtil.root, 'lacuna_util.db'))
 
 # Load all the tasks and db tables
 require_all File.join(LacunaUtil.root, 'lib', 'lacuna_util', 'tables')
