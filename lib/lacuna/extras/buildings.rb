@@ -15,58 +15,32 @@ module Lacuna
                 new_class
             end
 
-            # The list of all the buildings this client can interact with.
-            def self.types
-                %w[
-                    Algae
+            def self.is_glyph?(url)
+                url = url.split('/').last
+                is = false
+                self.glyphs.each do |glyph|
+                    if glyph.downcase == url
+                        is = true
+                        break
+                    end
+                end
+                is
+            end
+
+            def self.glyphs
+                %W[
                     AlgaePond
                     AmalgusMeadow
-                    Apple
-                    AtmosphericEvaporator
-                    Beach
-                    Bean
-                    Beeldeban
                     BeeldebanNest
                     BlackHoleGenerator
-                    Bread
-                    Burger
-                    Capitol
-                    Cheese
-                    Chip
-                    Cider
                     CitadelOfKnope
-                    CloakingLab
-                    Corn
-                    CornMeal
                     CrashedShipSite
-                    Crater
-                    Dairy
-                    Denton
                     DentonBrambles
-                    DeployedBleeder
-                    Development
-                    DistributionCenter
-                    Embassy
-                    EnergyReserve
-                    Entertainment
-                    Espionage
                     EssentiaVein
-                    Fission
-                    Fissure
-                    FoodReserve
-                    Fusion
-                    GasGiantLab
-                    GasGiantPlatform
-                    GeneticsLab
-                    Geo
                     GeoThermalVent
                     GratchsGauntlet
                     GreatBallOfJunk
-                    Grove
                     HallsOfVrbansk
-                    Hydrocarbon
-                    Intelligence
-                    IntelTraining
                     InterDimensionalRift
                     JunkHengeSculpture
                     KalavianRuins
@@ -76,27 +50,77 @@ module Lacuna
                     Lapis
                     LapisForest
                     LibraryOfJith
+                    MalcudField
+                    MassadsHenge
+                    MetalJunkArches
+                    NaturalSpring
+                    OracleOfAnid
+                    PantheonOfHagness
+                    PyramidJunkSculpture
+                    Ravine
+                    RockyOutcrop
+                    Sand
+                    SpaceJunkPark
+                    TempleOfTheDrajilites
+                    TheDillonForge
+                    Volcano
+                ]
+            end
+            def self.types
+
+                self.glyphs + %w[
+                    Algae
+                    Apple
+                    AtmosphericEvaporator
+                    Beach
+                    Bean
+                    Beeldeban
+                    Bread
+                    Burger
+                    Capitol
+                    Cheese
+                    Chip
+                    Cider
+                    CloakingLab
+                    Corn
+                    CornMeal
+                    Crater
+                    Dairy
+                    Denton
+                    DeployedBleeder
+                    Development
+                    DistributionCenter
+                    Embassy
+                    EnergyReserve
+                    Entertainment
+                    Espionage
+                    Fission
+                    Fissure
+                    FoodReserve
+                    Fusion
+                    GasGiantLab
+                    GasGiantPlatform
+                    GeneticsLab
+                    Geo
+                    Grove
+                    Hydrocarbon
+                    Intelligence
+                    IntelTraining
                     LostCityOfTyleon
                     LuxuryHousing
                     Malcud
-                    MalcudField
-                    MassadsHenge
                     MayhemTraining
                     MercenariesGuild
-                    MetalJunkArches
                     Mine
                     MiningMinistry
                     MissionCommand
                     MunitionsLab
-                    NaturalSpring
                     Network19
                     Observatory
-                    OracleOfAnid
                     OreRefinery
                     OreStorage
                     Oversight
                     Pancake
-                    PantheonOfHagness
                     Park
                     Pie
                     PilotTraining
@@ -104,33 +128,25 @@ module Lacuna
                     PoliticsTraining
                     Potato
                     Propulsion
-                    PyramidJunkSculpture
-                    Ravine
-                    RockyOutcrop
-                    Sand
                     SAW
                     Security
                     Shake
                     Shipyard
                     Singularity
                     Soup
-                    SpaceJunkPark
                     SpacePort
                     SpaceStationLab
                     Stockpile
                     SubspaceSupplyDepot
                     SupplyPod
                     Syrup
-                    TempleOfTheDrajilites
                     TerraformingLab
                     TerraformingPlatform
-                    TheDillonForge
                     TheftTraining
                     ThemePark
                     Trade
                     Transporter
                     University
-                    Volcano
                     WasteDigester
                     WasteEnergy
                     WasteExchanger
