@@ -6,21 +6,27 @@ require 'lacuna_util/logger'
 class LacunaUtil
     class Task
 
+        attr_accessor :args
+        attr_accessor :config
+
         def initialize
+            Logger.debug "Initializing #{self.class} task"
+
             Lacuna.connect({
                 :name        => LacunaUtil.config['name'],
                 :password    => LacunaUtil.config['password'],
                 :server_name => LacunaUtil.config['server_name'] || 'us1',
             })
+
+            @args = self.args() || {}
+            @config = LacunaUtil.config
         end
 
         def run
-            task_name = self.class
-            name = LacunaUtil.config['name']
-            print "\n"
-            Logger.log "Running task #{task_name} as #{name}"
-            print "\n"
-            self._run(self.args || {}, LacunaUtil.config)
+            Logger.space
+            Logger.log "Running task #{self.class} as #{@config['name']}"
+            Logger.space
+            self._run(@args, @config)
         end
     end
 end

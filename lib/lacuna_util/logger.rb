@@ -37,6 +37,11 @@ class Logger
         @messages << self.format(klass, message)
     end
 
+    def self.space
+        @messages << "\n"
+        print "\n"
+    end
+
     def self.format(klass, message)
         time = Time.now.strftime '%d/%m|%H:%M:%S'
         "#{time}~#{klass}: #{message}"

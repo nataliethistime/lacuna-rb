@@ -9,151 +9,59 @@ require 'terminal-table'
 
 class UpgradeBuildings < LacunaUtil::Task
 
+    def initialize
+        Logger.debug 'test'
+        super
+
+        # The array of successful upgrades. Used to generate a pretty table at the end.
+        @successful_upgrades = []
+    end
+
     def args
-        args = {
+        values = {
             :dry_run => false,
             :skip    => [],
             :max_time => 2 * 24 * 60 * 60, # 2 days
+            :planet => nil,
         }
 
         OptionParser.new do |opts|
 
             opts.on("-d", "--dry_run", "Run, showing actions, but not changing anything.") do
-                args[:dry_run] = true
+                values[:dry_run] = true
             end
 
             opts.on("-s", "--skip PLANET", "Skip a planet.") do |name|
-                args[:skip] << name.to_s
+                values[:skip] << name.to_s
+            end
+
+            opts.on("-p", "--planet PLANET", "Upgrade buildings on one planet.") do |name|
+                values[:planet] = name.to_s
             end
 
             opts.on("-m", "--max-time TIME", "Max build time (seconds).") do |time|
-                args[:max_time] = time.to_i
+                values[:max_time] = time.to_i
             end
 
         end.parse!
 
-        args
+        values
     end
 
     def _run(args, config)
 
-        # The array of successful upgrades. Used to generate a pretty table at the end.
-        successful_upgrades = []
-
-        Lacuna::Empire.planets.each do |id, name|
-
-            # Give the screen some space..
-            print "\n\n"
-
-            if args[:skip].include? name
-                Logger.log "Skipping #{name} according to command line option..."
-                next
+        if @args[:planet].nil?
+            Lacuna::Empire.planets.each do |id, name|
+                self.upgrade_buildings_on_planet(id, name)
             end
-
-            catch :planet do
-                Logger.log "Looking on #{name} for buildings to upgrade."
-                buildings = Lacuna::Body.get_buildings(id)['buildings']
-
-                # Save total build queue time for later.
-                queue_time = self.get_build_queue_time(buildings)
-
-                UPGRADES.each do |upgrade|
-                    builds = Lacuna::Body.find_buildings(buildings, upgrade[:name])
-                    next if builds.nil?
-
-                    # find_buildings returns the buildings sorted. We want to
-                    # upgrade the lower levels first. So, reverse the list.
-                    builds = builds.reverse
-
-                    builds.each do |build|
-                        next unless upgrade[:level] > build['level'].to_i
-                        next unless build['pending_build'].nil?
-
-                        # Make sure the queue isn't too full. Note: in dry-run,
-                        # this check doesn't occur.
-                        if queue_time >= args[:max_time] && !args[:dry_run]
-                            Logger.log "Build queue full enough."
-                            throw :planet
-                        end
-
-                        # Do the dirty work
-                        to_level = build['level'].to_i + 1
-                        Logger.log "Upgrading #{build['name']} to #{to_level}!"
-
-                        if args[:dry_run]
-                            successful_upgrades << {
-                                :level => to_level,
-                                :planet => name,
-                                :name => upgrade[:name],
-                            }
-                            next
-                        end
-
-                        begin
-                            to_upgrade = Lacuna::Buildings.url2class(build['url'])
-                            rv = to_upgrade.upgrade build['id']
-
-                            # Time remaining includes the time for all builds before
-                            # this one. (All of them).
-                            queue_time = rv['building']['pending_build']['seconds_remaining'].to_i
-
-                            successful_upgrades << {
-                                :level => to_level,
-                                :planet => name,
-                                :name => upgrade[:name],
-                            }
-
-                        rescue Lacuna::RPCException => e
-
-                            if e.message =~ /There\'s no room left in the build queue\./i
-                                # Move to the next planet.
-                                Logger.error "No room left in the build queue here."
-                                throw :planet
-                            elsif e.message =~ /not enough \S+ in storage to build this\./i
-                                # Try a different upgrade on this planet.
-                                Logger.error "Cannot afford this upgrade."
-                                next
-                            elsif e.message =~ /\S+ is currently offline\./i
-                                # damaged buildings
-                                Logger.error "There are damaged buildings on #{name}"
-                                throw :planet
-                            else
-                                raise Lacuna::TaskException, e.object
-                            end
-                        end
-                    end
-                end
-            end
+        else
+            planets = Lacuna::Empire.planets
+            name = @args[:planet]
+            id = planets.invert[name]
+            self.upgrade_buildings_on_planet(id, name)
         end
 
-        # Sort out all the data so it can be put into a table.
-        successful_upgrades.sort_by! { |obj| obj.values_at(:planet, :name, :level) }
-
-        table = Terminal::Table.new do
-            if args[:dry_run]
-                self.title = 'Possible Upgrades (DRY RUN)'
-            else
-                self.title = 'Upgrades in Progress'
-            end
-
-            self.headings = %w(Planet Name Level)
-
-            last_checked_name = (successful_upgrades.first || {})[:planet]
-            successful_upgrades.each do |upgrade|
-                if upgrade[:planet] != last_checked_name
-                    self.add_separator
-                    last_checked_name = upgrade[:planet]
-                end
-
-                self.add_row upgrade.values_at(:planet, :name, :level)
-            end
-
-            self.add_separator
-            self.add_row ['TOTAL', '', rows.size]
-        end
-
-        # Finally, draw the table to the terminal.
-        Logger.log_raw table.to_s
+        self.print_upgrades_table
     end
 
     def get_build_queue_time(buildings)
@@ -166,6 +74,122 @@ class UpgradeBuildings < LacunaUtil::Task
 
         # The last item in the queue will include the times of all the other builds.
         times.sort.last || 0
+    end
+
+    def upgrade_buildings_on_planet(id, name)
+        # Give the screen some space..
+        print "\n\n"
+
+        if args[:skip].include? name
+            Logger.log "Skipping #{name} according to command line option..."
+            return
+        end
+
+        catch :planet do
+            Logger.log "Looking on #{name} for buildings to upgrade."
+            buildings = Lacuna::Body.get_buildings(id)['buildings']
+
+            # Save total build queue time for later.
+            queue_time = self.get_build_queue_time(buildings)
+
+            UPGRADES.each do |upgrade|
+                builds = Lacuna::Body.find_buildings(buildings, upgrade[:name])
+                next if builds.nil?
+
+                # find_buildings returns the buildings sorted. We want to
+                # upgrade the lower levels first. So, reverse the list.
+                builds = builds.reverse
+
+                builds.each do |build|
+                    next unless upgrade[:level] > build['level'].to_i
+                    next unless build['pending_build'].nil?
+
+                    # Make sure the queue isn't too full. Note: in dry-run,
+                    # this check doesn't occur.
+                    if queue_time >= args[:max_time] && !args[:dry_run]
+                        Logger.log "Build queue full enough."
+                        throw :planet
+                    end
+
+                    # Do the dirty work
+                    to_level = build['level'].to_i + 1
+                    Logger.log "Upgrading #{build['name']} to #{to_level}!"
+
+                    if args[:dry_run]
+                        @successful_upgrades << {
+                            :level => to_level,
+                            :planet => name,
+                            :name => upgrade[:name],
+                        }
+                        next
+                    end
+
+                    begin
+                        to_upgrade = Lacuna::Buildings.url2class(build['url'])
+                        rv = to_upgrade.upgrade build['id']
+
+                        # Time remaining includes the time for all builds before
+                        # this one. (All of them).
+                        queue_time = rv['building']['pending_build']['seconds_remaining'].to_i
+
+                        @successful_upgrades << {
+                            :level => to_level,
+                            :planet => name,
+                            :name => upgrade[:name],
+                        }
+
+                    rescue Lacuna::RPCException => e
+
+                        if e.message =~ /There\'s no room left in the build queue\./i
+                            # Move to the next planet.
+                            Logger.error "No room left in the build queue here."
+                            throw :planet
+                        elsif e.message =~ /not enough \S+ in storage to build this\./i
+                            # Try a different upgrade on this planet.
+                            Logger.error "Cannot afford this upgrade."
+                            next
+                        elsif e.message =~ /\S+ is currently offline\./i
+                            # damaged buildings
+                            Logger.error "There are damaged buildings on #{name}"
+                            throw :planet
+                        else
+                            raise Lacuna::TaskException, e.object
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    def print_upgrades_table
+        # Sort out all the data so it can be put into a table.
+        @successful_upgrades.sort_by! { |obj| obj.values_at(:planet, :name, :level) }
+
+        table = Terminal::Table.new
+
+        if @args[:dry_run]
+            table.title = 'Possible Upgrades (DRY RUN)'
+        else
+            table.title = 'Upgrades in Progress'
+        end
+
+        table.headings = %w(Planet Name Level)
+
+        last_checked_name = (@successful_upgrades.first || {})[:planet]
+        @successful_upgrades.each do |upgrade|
+            if upgrade[:planet] != last_checked_name
+                table.add_separator
+                last_checked_name = upgrade[:planet]
+            end
+
+            table.add_row upgrade.values_at(:planet, :name, :level)
+        end
+
+        table.add_separator
+        table.add_row ['TOTAL', '', @successful_upgrades.size]
+
+        # Finally, draw the table to the terminal.
+        Logger.log_raw table.to_s
     end
 
     UPGRADES = [
