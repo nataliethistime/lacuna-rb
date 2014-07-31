@@ -9,6 +9,9 @@ job_type :tasks, "/usr/local/bin/ruby /home/vasari/lacuna-rb/bin/run.rb :task :o
 every :hour do
     task 'BuildExcavators'
     task 'UpgradeBuildings --skip "+:: Aragorn ::+" --skip "+:: Gimli ::+" --skip "+:: Legolas ::+"'
+    task 'QuickUpgrade --planet "+:: Aragorn ::+"'
+    task 'QuickUpgrade --planet "+:: Gimli ::+"'
+    task 'QuickUpgrade --planet "+:: Legolas ::+"'
     task 'CleanMail'
 end
 
@@ -16,6 +19,6 @@ every :day, :at => '4:20pm' do
     tasks 'InitStars InitExcavators SendExcavators MakeHalls'
 end
 
-every :day, :at => '4:40pm' do
+every :day, :at => '4:55pm' do
     task 'SendLog'
 end

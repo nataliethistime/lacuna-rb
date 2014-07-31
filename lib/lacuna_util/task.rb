@@ -10,8 +10,6 @@ class LacunaUtil
         attr_accessor :config
 
         def initialize
-            Logger.debug "Initializing #{self.class} task"
-
             Lacuna.connect({
                 :name        => LacunaUtil.config['name'],
                 :password    => LacunaUtil.config['password'],

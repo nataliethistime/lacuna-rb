@@ -80,7 +80,7 @@ class UpgradeBuildings < LacunaUtil::Task
         # Give the screen some space..
         print "\n\n"
 
-        if args[:skip].include? name
+        if @args[:skip].include? name
             Logger.log "Skipping #{name} according to command line option..."
             return
         end
@@ -148,7 +148,7 @@ class UpgradeBuildings < LacunaUtil::Task
                             # Try a different upgrade on this planet.
                             Logger.error "Cannot afford this upgrade."
                             next
-                        elsif e.message =~ /\S+ is currently offline\./i
+                        elsif e.message =~ /\S+ is currently offline\.|you must repair this building/i
                             # damaged buildings
                             Logger.error "There are damaged buildings on #{name}"
                             throw :planet
@@ -208,7 +208,7 @@ class UpgradeBuildings < LacunaUtil::Task
         },
         {
             :name  => 'Development Ministry',
-            :level => 30,
+            :level => 20,
         },
 
         #################
@@ -398,6 +398,10 @@ class UpgradeBuildings < LacunaUtil::Task
         },
         {
             :name  => 'Energy Reserve',
+            :level => 30,
+        },
+        {
+            :name  => 'Development Ministry',
             :level => 30,
         },
         {
