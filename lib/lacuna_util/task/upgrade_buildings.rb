@@ -144,7 +144,7 @@ class UpgradeBuildings < LacunaUtil::Task
                             # Move to the next planet.
                             Logger.error "No room left in the build queue here."
                             throw :planet
-                        elsif e.message =~ /not enough \S+ in storage to build this\./i
+                        elsif e.message =~ /not enough \S+ in storage to build this\.|do not have a sufficient supply/i
                             # Try a different upgrade on this planet.
                             Logger.error "Cannot afford this upgrade."
                             next
@@ -152,7 +152,12 @@ class UpgradeBuildings < LacunaUtil::Task
                             # damaged buildings
                             Logger.error "There are damaged buildings on #{name}"
                             throw :planet
+                        elsif e.message =~ /upgrade request is already being processed/i
+                            next
                         else
+                            # Try to dump out some help full information..
+                            p build
+
                             raise Lacuna::TaskException, e.object
                         end
                     end
@@ -291,7 +296,7 @@ class UpgradeBuildings < LacunaUtil::Task
 
         {
             :name  => 'Shield Against Weapons',
-            :level => 30,
+            :level => 20,
         },
 
         #########################
@@ -402,6 +407,10 @@ class UpgradeBuildings < LacunaUtil::Task
         },
         {
             :name  => 'Development Ministry',
+            :level => 30,
+        },
+        {
+            :name  => 'Shield Against Weapons',
             :level => 30,
         },
         {
