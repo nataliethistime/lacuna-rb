@@ -2,12 +2,13 @@
 
 A simplistic Ruby library for accessing the public API of the browser based game The Lacuna Expanse. **Note:** *this project is no longer being worked on. :pensive: Instead, please checkout [lacuna.js](https://github.com/1vasari/lacuna.js)! :clap: :clap:*
 
-[![Build Status](https://secure.travis-ci.org/1vasari/lacuna-rb.svg?branch=master)](http://travis-ci.org/Vasari/lacuna-rb)
+[![Code Climate](https://codeclimate.com/github/1vasari/lacuna-rb/badges/gpa.svg)](https://codeclimate.com/github/1vasari/lacuna-rb)
+[![Build Status](https://secure.travis-ci.org/1vasari/lacuna-rb.svg?branch=master)](http://travis-ci.org/1vasari/lacuna-rb)
 
 # Changes
 
 ### 0.0.7 (2014-06-07)
-- Merged [lacuna-rb](http://github.com/Vasari/lacuna-rb) and [lacuna-util-rb](http://github.com/Vasari/lacuna-util-rb)
+- Merged [lacuna-rb](http://github.com/1vasari/lacuna-rb) and [lacuna-util-rb](http://github.com/1vasari/lacuna-util-rb)
 - `MakeHalls` now uses the new helper methods.
 
 ### 0.0.6 (2014-06-07)
