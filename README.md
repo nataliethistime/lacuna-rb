@@ -1,6 +1,6 @@
 # lacuna-rb
 
-A Ruby gem for accessing the public API of the browser based game [The Lacuna Expanse](http://lacunaexpanse.com). **Note:** *this project is no longer being worked on. :pensive: Instead, please checkout [lacuna.js](https://github.com/1vasari/lacuna.js)! :clap: :clap:*
+A Ruby gem for accessing the public API of the browser based game [The Lacuna Expanse](http://lacunaexpanse.com). **Note:** *this project is no longer being worked on. :pensive: Instead, please check out [le-serf](https://github.com/1vasari/le-serf)! :clap: :clap:*
 
 [![Code Climate](https://codeclimate.com/github/1vasari/lacuna-rb/badges/gpa.svg)](https://codeclimate.com/github/1vasari/lacuna-rb)
 [![Build Status](https://secure.travis-ci.org/1vasari/lacuna-rb.svg?branch=master)](http://travis-ci.org/1vasari/lacuna-rb)
